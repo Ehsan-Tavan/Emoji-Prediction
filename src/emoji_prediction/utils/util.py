@@ -24,11 +24,11 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/20/2020"
+__date__ = "10/23/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -48,24 +48,14 @@ class DataSet:
 
         self.iterator_dict = OrderedDict()
         self.class_weight = None
-        self.embedding_dict = OrderedDict([
-            ("vocab_embedding_vectors", None)
-        ])
-        self.unk_idx_dict = OrderedDict([
-            ("token_unk_idx", None),
-            ("lemma_unk_idx", None)
-        ])
-        self.pad_idx_dict = OrderedDict([
-            ("token_pad_idx", None),
-            ("lemma_pad_idx", None),
-            ("pos_pad_idx", None)
-        ])
 
-        self.num_vocab_dict = OrderedDict([
-            ("num_token", 0),
-            ("num_lemma", 0),
-            ("num_pos", 0)
-        ])
+        self.embedding_dict = OrderedDict()
+
+        self.unk_idx_dict = OrderedDict()
+
+        self.pad_idx_dict = OrderedDict()
+
+        self.num_vocab_dict = OrderedDict()
 
     @staticmethod
     def read_csv_file(input_path):
@@ -213,12 +203,12 @@ class DataSet:
                                                    shuffle=True,
                                                    device=DEVICE)),
             ("train_iterator_eval", data.BucketIterator(kwargs["train_data"],
-                                                        batch_size=50*BATCH_SIZE,
+                                                        batch_size=25*BATCH_SIZE,
                                                         sort=False,
                                                         shuffle=True,
                                                         device=DEVICE)),
             ("valid_iterator", data.BucketIterator(kwargs["valid_data"],
-                                                   batch_size=50*BATCH_SIZE,
+                                                   batch_size=25*BATCH_SIZE,
                                                    sort=False,
                                                    shuffle=True,
                                                    device=DEVICE)),
