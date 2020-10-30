@@ -11,7 +11,6 @@ cnn_run.py is written for run cnn model
 
 import time
 import logging
-from collections import OrderedDict
 import matplotlib.pyplot as plt
 import torch
 from torch import optim
@@ -30,7 +29,7 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
@@ -141,8 +140,8 @@ class RunModel:
         best_validation_loss = float("inf")
         best_test_f_score = 0.0
 
-        losses_dict = OrderedDict()
-        acc_dict = OrderedDict()
+        losses_dict = dict()
+        acc_dict = dict()
         losses_dict["train_loss"] = []
         losses_dict["validation_loss"] = []
         losses_dict["test_loss"] = []
@@ -155,7 +154,7 @@ class RunModel:
             start_time = time.time()
 
             # train model on train data
-            train_log_dict = OrderedDict()
+            train_log_dict = dict()
             train_log_dict["train_loss"], train_log_dict["train_acc"] =\
                 train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion)
             losses_dict["train_loss"].append(train_log_dict["train_loss"])
@@ -167,7 +166,7 @@ class RunModel:
                 evaluate(model, data_set.iterator_dict["train_iterator_eval"], criterion)
 
             # compute model result on validation data
-            valid_log_dict = OrderedDict()
+            valid_log_dict = dict()
             valid_log_dict["valid_loss"], valid_log_dict["valid_acc"],\
                 valid_log_dict["valid_precision"], valid_log_dict["valid_recall"],\
                 valid_log_dict["valid_fscore"], valid_log_dict["valid_total_fscore"] =\
@@ -177,7 +176,7 @@ class RunModel:
             acc_dict["validation_acc"].append(valid_log_dict["valid_acc"])
 
             # compute model result on test data
-            test_log_dict = OrderedDict()
+            test_log_dict = dict()
             test_log_dict["test_loss"], test_log_dict["test_acc"], \
                 test_log_dict["test_precision"], test_log_dict["test_recall"], \
                 test_log_dict["test_fscore"], test_log_dict["test_total_fscore"] = \
