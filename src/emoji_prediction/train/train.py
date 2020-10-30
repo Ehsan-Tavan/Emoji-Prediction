@@ -11,17 +11,17 @@ import logging
 import torch
 import numpy as np
 from sklearn.metrics import precision_recall_fscore_support, f1_score
-from emoji_prediction.tools.evaluation import categorical_accuracy
+from emoji_prediction.tools.evaluation_helper import categorical_accuracy
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/20/2020"
+__date__ = "10/30/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
