@@ -17,7 +17,7 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
@@ -130,9 +130,22 @@ def evaluate(model, iterator, criterion):
             evaluate_parameters_dict["f-score"] += f_score
             evaluate_parameters_dict["total_fscore"] += total_f_score
 
-    return evaluate_parameters_dict["loss"] / len(iterator),\
-        evaluate_parameters_dict["acc"] / len(iterator),\
-        evaluate_parameters_dict["precision"] / len(iterator),\
-        evaluate_parameters_dict["recall"] / len(iterator),\
-        evaluate_parameters_dict["f-score"] / len(iterator),\
+    evaluate_parameters_dict["loss"] = \
+        evaluate_parameters_dict["loss"] / len(iterator)
+
+    evaluate_parameters_dict["acc"] = \
+        evaluate_parameters_dict["acc"] / len(iterator)
+
+    evaluate_parameters_dict["precision"] = \
+        evaluate_parameters_dict["precision"] / len(iterator)
+
+    evaluate_parameters_dict["recall"] = \
+        evaluate_parameters_dict["recall"] / len(iterator)
+
+    evaluate_parameters_dict["f-score"] = \
+        evaluate_parameters_dict["f-score"] / len(iterator)
+
+    evaluate_parameters_dict["total_fscore"] = \
         evaluate_parameters_dict["total_fscore"] / len(iterator)
+
+    return evaluate_parameters_dict
