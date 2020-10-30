@@ -17,7 +17,7 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
@@ -34,9 +34,6 @@ def train(model, iterator, optimizer, criterion):
     :param iterator: train iterator
     :param optimizer: your optimizer
     :param criterion: your criterion
-    :return:
-        final_loss: final loss for epoch
-        final_acc: accuracy for epoch
     """
     epoch_loss = 0
     epoch_acc = 0
@@ -72,12 +69,6 @@ def train(model, iterator, optimizer, criterion):
             logging.info(f"\t accuracy : {(epoch_acc/n_batch) * 100 :.2f}%")
             logging.info(f"\t loss : {(epoch_loss/n_batch):.4f}")
             logging.info("________________________________________________\n")
-
-    # calculate final loss and accuracy for all data in one epoch
-    final_loss = epoch_loss / len(iterator)
-    final_acc = epoch_acc / len(iterator)
-
-    return final_loss, final_acc
 
 
 def evaluate(model, iterator, criterion):
