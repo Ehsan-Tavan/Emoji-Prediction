@@ -30,11 +30,11 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/23/2020"
+__date__ = "10/30/2020"
 
 
 logging.basicConfig(
@@ -64,9 +64,9 @@ class RunModel:
         return data_set
 
     @staticmethod
-    def load_model(data_set):
+    def init_model(data_set):
         """
-        load_model method is written for loading model and
+        init_model method is written for loading model and
         define loss function and optimizer
         :param data_set:
         :return:
@@ -136,7 +136,7 @@ class RunModel:
         run method is written for running model
         """
         data_set = self.load_data_set()
-        model, criterion, optimizer = self.load_model(data_set)
+        model, criterion, optimizer = self.init_model(data_set)
 
         best_validation_loss = float("inf")
         best_test_f_score = 0.0
