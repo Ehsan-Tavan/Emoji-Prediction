@@ -8,7 +8,6 @@ util.py is writen for creating iterator and save field
 """
 
 import logging
-from collections import OrderedDict
 import random
 import hazm
 import torch
@@ -24,11 +23,11 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/23/2020"
+__date__ = "10/30/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -40,22 +39,18 @@ class DataSet:
     and iterator for training model.
     """
     def __init__(self, **kwargs):
-        self.files_address = OrderedDict([
-            ("train_data_path", kwargs["train_data_path"]),
-            ("test_data_path", kwargs["test_data_path"]),
-            ("embedding_path", kwargs["embedding_path"])
-        ])
+        self.files_address = {
+            "train_data_path": kwargs["train_data_path"],
+            "test_data_path": kwargs["test_data_path"],
+            "embedding_path": kwargs["embedding_path"]
+        }
 
-        self.iterator_dict = OrderedDict()
         self.class_weight = None
-
-        self.embedding_dict = OrderedDict()
-
-        self.unk_idx_dict = OrderedDict()
-
-        self.pad_idx_dict = OrderedDict()
-
-        self.num_vocab_dict = OrderedDict()
+        self.iterator_dict = dict()
+        self.embedding_dict = dict()
+        self.unk_idx_dict = dict()
+        self.pad_idx_dict = dict()
+        self.num_vocab_dict = dict()
 
     @staticmethod
     def read_csv_file(input_path):
@@ -82,10 +77,10 @@ class DataSet:
         # Create Field for data
         text_field = data.Field(tokenize=hazm.word_tokenize, sequential=True)
         label_field = data.LabelField()
-        dictionary_fields = OrderedDict([
-            ("text_field", text_field),
-            ("label_field", label_field)
-        ])
+        dictionary_fields = {
+            "text_field": text_field,
+            "label_field": label_field
+        }
 
         # create list of data fields
         data_fields = [("text", text_field), ("label", label_field)]
@@ -196,28 +191,28 @@ class DataSet:
         :return:
             iterator_dict: dictionary of iterators
         """
-        iterator_dict = OrderedDict([
-            ("train_iterator", data.BucketIterator(kwargs["train_data"],
-                                                   batch_size=BATCH_SIZE,
-                                                   sort=False,
-                                                   shuffle=True,
-                                                   device=DEVICE)),
-            ("train_iterator_eval", data.BucketIterator(kwargs["train_data"],
-                                                        batch_size=25*BATCH_SIZE,
-                                                        sort=False,
-                                                        shuffle=True,
-                                                        device=DEVICE)),
-            ("valid_iterator", data.BucketIterator(kwargs["valid_data"],
-                                                   batch_size=25*BATCH_SIZE,
-                                                   sort=False,
-                                                   shuffle=True,
-                                                   device=DEVICE)),
-            ("test_iterator", data.BucketIterator(kwargs["test_data"],
-                                                  batch_size=5*BATCH_SIZE,
+        iterator_dict = {
+            "train_iterator": data.BucketIterator(kwargs["train_data"],
+                                                  batch_size=BATCH_SIZE,
                                                   sort=False,
                                                   shuffle=True,
-                                                  device=DEVICE))
-        ])
+                                                  device=DEVICE),
+            "train_iterator_eval": data.BucketIterator(kwargs["train_data"],
+                                                       batch_size=25*BATCH_SIZE,
+                                                       sort=False,
+                                                       shuffle=True,
+                                                       device=DEVICE),
+            "valid_iterator": data.BucketIterator(kwargs["valid_data"],
+                                                  batch_size=25*BATCH_SIZE,
+                                                  sort=False,
+                                                  shuffle=True,
+                                                  device=DEVICE),
+            "test_iterator": data.BucketIterator(kwargs["test_data"],
+                                                 batch_size=5*BATCH_SIZE,
+                                                 sort=False,
+                                                 shuffle=True,
+                                                 device=DEVICE)
+        }
         return iterator_dict
 
     @staticmethod
@@ -228,7 +223,7 @@ class DataSet:
         :return:
             num_vocab_dict:  dictionary of vocab counts in each field
         """
-        num_vocab_dict = OrderedDict()
+        num_vocab_dict = dict()
         num_vocab_dict["num_token"] = len(dictionary_fields["text_field"].vocab)
         num_vocab_dict["num_label"] = len(dictionary_fields["label_field"].vocab)
         return num_vocab_dict
@@ -241,7 +236,7 @@ class DataSet:
         :return:
             pad_idx_dict: dictionary of pad index in each field
         """
-        pad_idx_dict = OrderedDict()
+        pad_idx_dict = dict()
         pad_idx_dict["token_pad_idx"] = dictionary_fields["text_field"]\
             .vocab.stoi[dictionary_fields["text_field"].pad_token]
         return pad_idx_dict
@@ -254,7 +249,7 @@ class DataSet:
         :return:
             unk_idx_dict: dictionary of unk index in each field
         """
-        unk_idx_dict = OrderedDict()
+        unk_idx_dict = dict()
         unk_idx_dict["token_unk_idx"] = dictionary_fields["text_field"] \
             .vocab.stoi[dictionary_fields["text_field"].unk_token]
         return unk_idx_dict
