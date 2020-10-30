@@ -29,7 +29,7 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
@@ -153,36 +153,25 @@ class RunModel:
             start_time = time.time()
 
             # train model on train data
-            train_log_dict = dict()
-            train_log_dict["train_loss"], train_log_dict["train_acc"] =\
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion)
-            losses_dict["train_loss"].append(train_log_dict["train_loss"])
-            acc_dict["train_acc"].append(train_log_dict["train_acc"])
+            train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion)
 
             # compute model result on train data
-            _, _, train_log_dict["train_precision"], train_log_dict["train_recall"],\
-                train_log_dict["train_fscore"], train_log_dict["train_total_fscore"] =\
-                evaluate(model, data_set.iterator_dict["train_iterator_eval"], criterion)
+            train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator_eval"], criterion)
+
+            losses_dict["train_loss"].append(train_log_dict["loss"])
+            acc_dict["train_acc"].append(train_log_dict["acc"])
 
             # compute model result on validation data
-            valid_log_dict = dict()
-            valid_log_dict["valid_loss"], valid_log_dict["valid_acc"],\
-                valid_log_dict["valid_precision"], valid_log_dict["valid_recall"],\
-                valid_log_dict["valid_fscore"], valid_log_dict["valid_total_fscore"] =\
-                evaluate(model, data_set.iterator_dict["valid_iterator"], criterion)
+            valid_log_dict = evaluate(model, data_set.iterator_dict["valid_iterator"], criterion)
 
-            losses_dict["validation_loss"].append(valid_log_dict["valid_loss"])
-            acc_dict["validation_acc"].append(valid_log_dict["valid_acc"])
+            losses_dict["validation_loss"].append(valid_log_dict["loss"])
+            acc_dict["validation_acc"].append(valid_log_dict["acc"])
 
             # compute model result on test data
-            test_log_dict = dict()
-            test_log_dict["test_loss"], test_log_dict["test_acc"], \
-                test_log_dict["test_precision"], test_log_dict["test_recall"], \
-                test_log_dict["test_fscore"], test_log_dict["test_total_fscore"] = \
-                evaluate(model, data_set.iterator_dict["test_iterator"], criterion)
+            test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion)
 
-            losses_dict["test_loss"].append(test_log_dict["test_loss"])
-            acc_dict["test_acc"].append(test_log_dict["test_acc"])
+            losses_dict["test_loss"].append(test_log_dict["loss"])
+            acc_dict["test_acc"].append(test_log_dict["acc"])
 
             end_time = time.time()
 
@@ -190,18 +179,18 @@ class RunModel:
             epoch_mins, epoch_secs = process_time(start_time, end_time)
 
             # save model when loss in validation data is decrease
-            if valid_log_dict["valid_loss"] < best_validation_loss:
-                best_validation_loss = valid_log_dict["valid_loss"]
+            if valid_log_dict["loss"] < best_validation_loss:
+                best_validation_loss = valid_log_dict["loss"]
                 torch.save(model.state_dict(),
                            MODEL_PATH + f"model_epoch{epoch + 1}_loss_"
-                           f"{valid_log_dict['valid_loss']}.pt")
+                           f"{valid_log_dict['loss']}.pt")
 
-            # save model when fscore in class 2 of test data is increase
-            if test_log_dict["test_total_fscore"] > best_test_f_score:
-                best_test_f_score = test_log_dict["test_total_fscore"]
+            # save model when fscore in test data is increase
+            if test_log_dict["total_fscore"] > best_test_f_score:
+                best_test_f_score = test_log_dict["total_fscore"]
                 torch.save(model.state_dict(),
                            MODEL_PATH + f"model_epoch{epoch + 1}"
-                           f"_fscore_{test_log_dict['test_total_fscore']}.pt")
+                           f"_fscore_{test_log_dict['total_fscore']}.pt")
 
             # show model result
             logging.info(f"Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s")
