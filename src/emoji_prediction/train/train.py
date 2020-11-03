@@ -27,13 +27,14 @@ logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
 
 
-def train(model, iterator, optimizer, criterion):
+def train(model, iterator, optimizer, criterion, scheduler):
     """
     train method is written for train model
     :param model: your creation model
     :param iterator: train iterator
     :param optimizer: your optimizer
     :param criterion: your criterion
+    :param scheduler: scheduler
     """
     epoch_loss = 0
     epoch_acc = 0
@@ -60,6 +61,8 @@ def train(model, iterator, optimizer, criterion):
         # back-propagate loss
         loss.backward()
         optimizer.step()
+        # Decay Learning Rate
+        scheduler.step()
 
         epoch_loss += loss.item()
         epoch_acc += acc.item()
