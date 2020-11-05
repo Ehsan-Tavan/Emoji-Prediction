@@ -18,24 +18,40 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.0.3"
+__version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/03/2020"
+__date__ = "11/05/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
 
 
-def train(model, iterator, optimizer, criterion):
+def exp_lr_scheduler(optimizer, epoch, lr_decay=0.3, lr_decay_epoch=2):
+    """Decay learning rate by a factor of lr_decay every lr_decay_epoch epochs"""
+    if (epoch+1) % lr_decay_epoch:
+        return optimizer
+
+    for param_group in optimizer.param_groups:
+        param_group["lr"] *= lr_decay
+    return optimizer
+
+
+def train(model, iterator, optimizer, criterion, epoch, lr_decay=True):
     """
     train method is written for train model
     :param model: your creation model
     :param iterator: train iterator
     :param optimizer: your optimizer
     :param criterion: your criterion
+    :param epoch: training epoch
+    :param lr_decay: lr_decay
     """
+    if lr_decay:
+        optimizer = exp_lr_scheduler(optimizer, epoch)
+        print(f"On epoch {epoch + 1} learning rate is {optimizer.param_groups[0]['lr']}")
+
     epoch_loss = 0
     epoch_acc = 0
 
