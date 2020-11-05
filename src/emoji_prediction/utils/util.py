@@ -41,6 +41,7 @@ class DataSet:
     def __init__(self, **kwargs):
         self.files_address = {
             "train_data_path": kwargs["train_data_path"],
+            "validation_data_path": kwargs["validation_data_path"],
             "test_data_path": kwargs["test_data_path"],
             "embedding_path": kwargs["embedding_path"]
         }
@@ -100,7 +101,14 @@ class DataSet:
                           self.read_csv_file(self.files_address["train_data_path"]).values.tolist()]
 
         train_data = data.Dataset(train_examples, data_fields)
-        train_data, valid_data = train_data.split(split_ratio=0.85, random_state=random.seed(1234))
+
+        logging.info("Start creating validation example.")
+        validation_examples = [data.Example.fromlist(row, data_fields) for row in
+                               self.read_csv_file(self.files_address["validation_data_path"]).values.tolist()]
+
+        validation_data = data.Dataset(validation_examples, data_fields)
+
+        # train_data, valid_data = train_data.split(split_ratio=0.85, random_state=random.seed(1234))
 
         logging.info("Start creating test example.")
         test_examples = [data.Example.fromlist(row, data_fields) for row in
@@ -141,11 +149,11 @@ class DataSet:
         # creating iterators for training model
         logging.info("Start creating iterator.")
         self.iterator_dict = self.creating_iterator(train_data=train_data,
-                                                    valid_data=valid_data,
+                                                    valid_data=validation_data,
                                                     test_data=test_data)
 
         logging.info("Loaded %d train examples", len(train_data))
-        logging.info("Loaded %d valid examples", len(valid_data))
+        logging.info("Loaded %d valid examples", len(validation_data))
         logging.info("Loaded %d test examples", len(test_data))
 
     @staticmethod
