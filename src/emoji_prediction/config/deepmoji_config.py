@@ -17,7 +17,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/21/2020"
+__date__ = "11/05/2020"
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
 RAW_DATA_PATH = "../data/Raw/first_categori_tweets.csv"
@@ -29,6 +29,9 @@ TRAIN_NORMAL_DATA_PATH = "../data/Processed/" \
                                     "train_first_categori_tweets_normal.csv"
 TEST_NORMAL_DATA_PATH = "../data/Processed/" \
                                    "test_first_categori_tweets_normal.csv"
+
+VALIDATION_NORMAL_DATA_PATH = "../data/Processed/" \
+                                   "valid_first_categori_tweets_normal.csv"
 
 LOSS_CURVE_PATH = "../models/ID_7/Curves/loss_curve.png"
 ACC_CURVE_PATH = "../models/ID_7/Curves/accuracy_curve.png"
