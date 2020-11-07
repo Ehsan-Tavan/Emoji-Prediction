@@ -156,6 +156,11 @@ class RunModel:
         for epoch in range(N_EPOCHS):
             start_time = time.time()
 
+            # add noise to fully connected layers
+            with torch.no_grad():
+                for param in model.parameters():
+                    param.add_(torch.randn(param.size()).to(DEVICE))
+
             # train model on train data
             train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion)
 
