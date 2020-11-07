@@ -111,6 +111,7 @@ class RunModel:
         draw_curves method is written for drawing loss and accuracy curve
         """
         # plot loss curves
+        plt.figure()
         plt.plot(kwargs["train_loss"], "r", label="train_loss")
         plt.plot(kwargs["validation_loss"], "b", label="validation_loss")
         plt.plot(kwargs["test_loss"], "g", label="test_loss")
@@ -123,6 +124,7 @@ class RunModel:
         plt.clf()
 
         # plot accuracy curves
+        plt.figure()
         plt.plot(kwargs["train_acc"], "r", label="train_acc")
         plt.plot(kwargs["validation_acc"], "b", label="validation_acc")
         plt.plot(kwargs["test_acc"], "g", label="test_acc")
