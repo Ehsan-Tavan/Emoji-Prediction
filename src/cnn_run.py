@@ -96,7 +96,7 @@ class RunModel:
         logging.info(f"The model has {count_parameters(model):,} trainable parameters")
 
         # define optimizer
-        optimizer = optim.Adam(model.parameters())
+        optimizer = optim.Adam(model.parameters(), lr=0.0001)
         # define loss function
         criterion = nn.CrossEntropyLoss(weight=torch.tensor(data_set.class_weight))
 
