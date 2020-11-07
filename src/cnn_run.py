@@ -21,19 +21,19 @@ from emoji_prediction.train.train import train, evaluate
 from emoji_prediction.tools.log_helper import count_parameters, process_time,\
     model_result_log, model_result_save
 from emoji_prediction.config.cnn_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
-    TEST_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D, EMBEDDING_DIM, DEVICE, N_EPOCHS,\
-    MODEL_PATH, N_FILTERS, FILTER_SIZE, START_DROPOUT, MIDDLE_DROPOUT, END_DROPOUT,\
-    LOSS_CURVE_PATH, ACC_CURVE_PATH
+    TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D, EMBEDDING_DIM,\
+    DEVICE, N_EPOCHS, MODEL_PATH, N_FILTERS, FILTER_SIZE, START_DROPOUT, MIDDLE_DROPOUT,\
+    END_DROPOUT, LOSS_CURVE_PATH, ACC_CURVE_PATH
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.2.0"
+__version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/30/2020"
+__date__ = "11/07/2020"
 
 
 logging.basicConfig(
@@ -58,6 +58,7 @@ class RunModel:
         # load data from input file
         data_set = DataSet(train_data_path=TRAIN_NORMAL_DATA_PATH,
                            test_data_path=TEST_NORMAL_DATA_PATH,
+                           validation_data_path=VALIDATION_NORMAL_DATA_PATH,
                            embedding_path=SKIPGRAM_NEWS_300D)
         data_set.load_data()
         return data_set
