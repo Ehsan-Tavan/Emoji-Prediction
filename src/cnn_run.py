@@ -162,7 +162,7 @@ class RunModel:
                     param.add_(torch.randn(param.size()).to(DEVICE))
 
             # train model on train data
-            train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion)
+            train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
 
             # compute model result on train data
             train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator_eval"], criterion)
