@@ -132,7 +132,7 @@ class RunModel:
         plt.ylabel("accuracy value")
         plt.savefig(ACC_CURVE_PATH)
 
-    def run(self):
+    def run(self, adding_noise=True):
         """
         run method is written for running model
         """
@@ -155,6 +155,11 @@ class RunModel:
         for epoch in range(N_EPOCHS):
             start_time = time.time()
             # train model on train data
+            if adding_noise:
+                with torch.no_grad():
+                    for param in model.parameters():
+                        param.add_(torch.randn(param.size()).to(DEVICE))
+
             train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
 
             # compute model result on train data
