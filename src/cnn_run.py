@@ -33,7 +33,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/07/2020"
+__date__ = "11/08/2020"
 
 
 logging.basicConfig(
@@ -156,17 +156,18 @@ class RunModel:
         for epoch in range(N_EPOCHS):
             start_time = time.time()
 
-            # add noise to fully connected layers
+            # adding noise to fully connected layers
             if adding_noise:
                 with torch.no_grad():
-                    for param in model.parameters():
-                        param.add_(torch.randn(param.size()).to(DEVICE))
+                    for name, param in model.named_parameters():
+                        if name.startswith("w_s1") or name.startswith("w_s2"):
+                            param.add_(torch.randn(param.size()).to(DEVICE))
 
             # train model on train data
             train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
 
             # compute model result on train data
-            train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator_eval"], criterion)
+            train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator"], criterion)
 
             losses_dict["train_loss"].append(train_log_dict["loss"])
             acc_dict["train_acc"].append(train_log_dict["acc"])
