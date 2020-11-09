@@ -8,7 +8,6 @@ data_util.py is writen for creating iterator and save field
 """
 
 import logging
-import random
 import hazm
 import torch
 import numpy as np
@@ -23,11 +22,11 @@ __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
 __credits__ = ["Ehsan Tavan"]
 __license__ = "Public Domain"
-__version__ = "1.1.1"
+__version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/30/2020"
+__date__ = "11/09/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
