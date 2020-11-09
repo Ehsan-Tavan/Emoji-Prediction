@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import torch
 from torch import optim
 from torch import nn
-from emoji_prediction.utils.util import DataSet, init_weights
+from emoji_prediction.utils.data_util import DataSet, init_weights
 from emoji_prediction.methods.cnn_model import CNN
 from emoji_prediction.train.train import train, evaluate
 from emoji_prediction.tools.log_helper import count_parameters, process_time,\
