@@ -56,7 +56,6 @@ class DataSet:
     def read_csv_file(input_path):
         """
         read_csv_file method is written for reading input csv file
-        and calculate class_weight
         :param input_path: csv file path
         :return:
             input_df: dataFrame of input data
