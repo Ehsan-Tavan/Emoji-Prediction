@@ -4,7 +4,7 @@
 # pylint: disable-msg=import-error
 
 """
-util.py is writen for creating iterator and save field
+data_util.py is writen for creating iterator and save field
 """
 
 import logging
