@@ -16,7 +16,7 @@ import torch
 from torch import optim
 from torch.optim.lr_scheduler import StepLR
 from torch import nn
-from emoji_prediction.utils.util import DataSet, init_weights
+from emoji_prediction.utils.data_util import DataSet, init_weights
 from emoji_prediction.methods.deepmoji_model import DeeoMoji
 from emoji_prediction.train.train import train, evaluate
 from emoji_prediction.tools.log_helper import count_parameters, process_time,\
