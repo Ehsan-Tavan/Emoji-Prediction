@@ -46,6 +46,7 @@ class DataSet:
         }
 
         self.class_weight = None
+        self.text_field = None
         self.iterator_dict = dict()
         self.embedding_dict = dict()
         self.unk_idx_dict = dict()
@@ -122,6 +123,7 @@ class DataSet:
                                                         self.files_address["embedding_path"]
                                                     ))
 
+        self.text_field = dictionary_fields["text_field"]
         logging.info("Start creating label_field vocabs.")
         dictionary_fields["label_field"].build_vocab(train_data)
 
