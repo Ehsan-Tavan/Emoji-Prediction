@@ -25,15 +25,20 @@ TRAIN_NORMAL_NO_MENTION_DATA_PATH = "../data/Processed/" \
                                     "train_first_categori_no_mention_tweets_normal.csv"
 TEST_NORMAL_NO_MENTION_DATA_PATH = "../data/Processed/" \
                                    "test_first_categori_no_mention_tweets_normal.csv"
-TRAIN_NORMAL_DATA_PATH = "../data/Processed/" \
-                                    "train_first_categori_tweets_normal.csv"
+TRAIN_NORMAL_DATA_PATH = "../../../data/Processed/" \
+                                    "train_first_categori_tweets_normal_5.csv"
 TEST_NORMAL_DATA_PATH = "../data/Processed/" \
                                    "test_first_categori_tweets_normal.csv"
 VALIDATION_NORMAL_DATA_PATH = "../data/Processed/" \
                                    "valid_first_categori_tweets_normal.csv"
 
+WORD2IDX_PATH = "../../../data/Processed/word2idx.pkl"
+IDX2WORD_PATH = "../../../data/Processed/idx2word.pkl"
+INDEXED_SEN_PATH = "../../../data/Processed/indexed_sen.pkl"
+INDEXED_LABEL_PATH = "../../../data/Processed/indexed_label.pkl"
+
 GLOVE_NEWS_300D = "../data/Embeddings/news_glove_300d_e10.txt"
-SKIPGRAM_NEWS_300D = "../data/Embeddings/skipgram_news_300d_30e.txt"
+SKIPGRAM_NEWS_300D = "../../../data/Embeddings/skipgram_news_300d_30e.txt"
 CBOW_NEWS_300D = "../data/Embeddings/cbow_news_300d_30e.txt"
 
 LOSS_CURVE_PATH = "../models/ID_01/Curves/loss_curve.png"
