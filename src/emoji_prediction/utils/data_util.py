@@ -63,7 +63,7 @@ class DataSet:
         input_df = pd.read_csv(input_path)
         input_df = input_df.astype({"tweets": "str"})
         input_df = input_df.astype({"emojis": "str"})
-        return input_df
+        return input_df[:500]
 
     @staticmethod
     def create_fields():
@@ -74,7 +74,7 @@ class DataSet:
             data_fields: list of data fields
         """
         # Create Field for data
-        text_field = data.Field(tokenize=hazm.word_tokenize, sequential=True)
+        text_field = data.Field(tokenize=hazm.word_tokenize, batch_first=True, sequential=True)
         label_field = data.LabelField()
         dictionary_fields = {
             "text_field": text_field,
