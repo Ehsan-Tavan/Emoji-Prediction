@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/20/2020"
+__date__ = "11/14/2020"
 
 
 class CNN(nn.Module):
@@ -64,13 +64,10 @@ class CNN(nn.Module):
         self.start_dropout = nn.Dropout(kwargs["start_dropout"])
 
     def forward(self, input_batch):
-        # input_batch.size() = (sent len, batch size)
+        # input_batch.size() = (batch_size, sent_len)
 
         embedded = self.start_dropout(self.embeddings(input_batch))
-        # embedded.size() = (sent len, batch size, emb dim)
-
-        embedded = embedded.permute(1, 0, 2)
-        # embedded.size() = (batch size, sent len, emb dim)
+        # embedded.size() = (batch_size, sent_len, emb_dim)
 
         embedded = embedded.unsqueeze(1)
         # embedded.size() = (batch size, 1, sent len, emb dim)
