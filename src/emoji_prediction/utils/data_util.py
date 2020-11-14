@@ -75,7 +75,7 @@ class DataSet:
             data_fields: list of data fields
         """
         # Create Field for data
-        text_field = data.Field(tokenize=hazm.word_tokenize, batch_first=True, sequential=True)
+        text_field = data.Field(tokenize=hazm.word_tokenize, batch_first=True, include_lengths=True)
         label_field = data.LabelField()
         dictionary_fields = {
             "text_field": text_field,
