@@ -18,6 +18,7 @@ from torch import nn
 from emoji_prediction.utils.data_util import DataSet, init_weights
 from emoji_prediction.methods.cnn_model import CNN
 from emoji_prediction.train.train import train, evaluate
+from emoji_prediction.utils.augmentation import Augmentation
 from emoji_prediction.tools.log_helper import count_parameters, process_time,\
     model_result_log, model_result_save
 from emoji_prediction.config.cnn_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
@@ -68,7 +69,7 @@ class RunModel:
         """
         init_model method is written for loading model and
         define loss function and optimizer
-        :param data_set:
+        :param data_set: data_set class
         :return:
             model: deepmoji model
             criterion: loss function
@@ -133,7 +134,31 @@ class RunModel:
         plt.ylabel("accuracy value")
         plt.savefig(ACC_CURVE_PATH)
 
-    def run(self, adding_noise=True):
+    @staticmethod
+    def create_augmentation(data_set):
+        """
+        create_augmentation method is written for create augmentation class
+        and define augmentation methods
+        :param data_set: data_set class
+        :return:
+            augmentation_class: augmentation class
+            augmentation_methods: augmentation method dictionary
+
+        """
+        word2idx = data_set.text_field.vocab.stoi
+        idx2word = data_set.text_field.vocab.itos
+        vocabs = list(word2idx.keys())
+        augmentation_class = Augmentation(word2idx, idx2word, vocabs)
+
+        # augmentation method dictionary
+        augmentation_methods = {
+            "delete_randomly": True,
+            "replace_similar_words": True,
+            "swap_token": True
+        }
+        return augmentation_class, augmentation_methods
+
+    def run(self, adding_noise=False, augmentation=True):
         """
         run method is written for running model
         """
@@ -152,6 +177,10 @@ class RunModel:
         acc_dict["validation_acc"] = []
         acc_dict["test_acc"] = []
 
+        # call augmentation class
+        if augmentation:
+            augmentation_class, augmentation_methods = self.create_augmentation(data_set)
+
         # start training model
         for epoch in range(N_EPOCHS):
             start_time = time.time()
@@ -164,7 +193,11 @@ class RunModel:
                             param.add_(torch.randn(param.size()).to(DEVICE))
 
             # train model on train data
-            train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
+            if augmentation:
+                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch,
+                      augmentation_class, augmentation_methods)
+            else:
+                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
 
             # compute model result on train data
             train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator"], criterion)
