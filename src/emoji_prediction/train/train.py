@@ -38,7 +38,31 @@ def exp_lr_scheduler(optimizer, epoch, lr_decay=0.3, lr_decay_epoch=2):
     return optimizer
 
 
-def train(model, iterator, optimizer, criterion, epoch, lr_decay=True):
+def batch_augmentation(text, text_lengths, label, augmentation_class, augmentation_methods):
+    """
+    batch_augmentation method is written for augment input batch
+    :param text: input text
+    :param text_lengths: text length
+    :param label: label
+    :param augmentation_class:  augmentation class
+    :param augmentation_methods: augmentation methods dictionary
+    :return:
+    """
+    augmentation_text, augmentation_label = list(), list()
+    for txt, length, lbl in zip(text.tolist(), text_lengths.tolist(), label.tolist()):
+        augment_sen = augmentation_class.__run__(txt, length, augmentation_methods)
+        for sen in augment_sen:
+            augmentation_text.append(sen)
+            augmentation_label.append(lbl)
+    tensor_augmentation_text = torch.FloatTensor(augmentation_text).long()
+    tensor_augmentation_label = torch.FloatTensor(augmentation_label).long()
+
+    augmented_text, augmented_label = tensor_augmentation_text, tensor_augmentation_label
+    return augmented_text, augmented_label
+
+
+def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
+          augmentation_methods=None, lr_decay=True):
     """
     train method is written for train model
     :param model: your creation model
@@ -46,7 +70,9 @@ def train(model, iterator, optimizer, criterion, epoch, lr_decay=True):
     :param optimizer: your optimizer
     :param criterion: your criterion
     :param epoch: training epoch
-    :param lr_decay: lr_decay
+    :param augmentation_class: augmentation class
+    :param augmentation_methods: augmentation method dictionary
+    :param lr_decay: if lr_decay is True learning_decay is use
     """
     if lr_decay:
         optimizer = exp_lr_scheduler(optimizer, epoch)
@@ -64,15 +90,22 @@ def train(model, iterator, optimizer, criterion, epoch, lr_decay=True):
     for batch in iterator:
         n_batch += 1
         optimizer.zero_grad()
+        text, text_lengths = batch.text
+        label = batch.label
+
+        # augment input batch
+        if augmentation_class is not None:
+            text, label = batch_augmentation(text, text_lengths, label,
+                                             augmentation_class, augmentation_methods)
 
         # predict output
-        predictions = model(batch.text)
+        predictions = model(text)
 
         # calculate loss
-        loss = criterion(predictions, batch.label)
+        loss = criterion(predictions, label)
 
         # calculate accuracy
-        acc = categorical_accuracy(predictions, batch.label)
+        acc = categorical_accuracy(predictions, label)
 
         # back-propagate loss
         loss.backward()
@@ -113,7 +146,8 @@ def evaluate(model, iterator, criterion):
     with torch.no_grad():
         for batch in iterator:
             # predict input data
-            predictions = model(batch.text)
+            text, text_lengths = batch.text
+            predictions = model(text)
 
             total_predict.append(predictions.cpu().numpy())
             total_label.append(batch.label.cpu().numpy())
