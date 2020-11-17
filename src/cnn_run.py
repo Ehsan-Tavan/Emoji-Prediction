@@ -177,6 +177,8 @@ class RunModel:
         acc_dict["validation_acc"] = []
         acc_dict["test_acc"] = []
 
+        augmentation_class = None
+        augmentation_methods = None
         # call augmentation class
         if augmentation:
             augmentation_class, augmentation_methods = self.create_augmentation(data_set)
