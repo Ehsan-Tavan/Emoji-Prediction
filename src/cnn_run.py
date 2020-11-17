@@ -34,7 +34,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/08/2020"
+__date__ = "11/17/2020"
 
 
 logging.basicConfig(
@@ -97,7 +97,7 @@ class RunModel:
         logging.info(f"The model has {count_parameters(model):,} trainable parameters")
 
         # define optimizer
-        optimizer = optim.Adam(model.parameters(), lr=0.0001)
+        optimizer = optim.Adam(model.parameters(), lr=0.001)
         # define loss function
         criterion = nn.CrossEntropyLoss(weight=torch.tensor(data_set.class_weight))
 
