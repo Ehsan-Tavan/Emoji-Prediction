@@ -14,7 +14,6 @@ import logging
 import matplotlib.pyplot as plt
 import torch
 from torch import optim
-from torch.optim.lr_scheduler import StepLR
 from torch import nn
 from emoji_prediction.utils.data_util import DataSet, init_weights
 from emoji_prediction.methods.deepmoji_model import DeeoMoji
@@ -34,7 +33,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/08/2020"
+__date__ = "11/17/2020"
 
 
 logging.basicConfig(
@@ -96,7 +95,7 @@ class RunModel:
         logging.info(f"The model has {count_parameters(model):,} trainable parameters")
 
         # define optimizer
-        optimizer = optim.Adam(model.parameters(), lr=0.0001)
+        optimizer = optim.Adam(model.parameters(), lr=0.001)
 
         # define loss function
         criterion = nn.CrossEntropyLoss(weight=torch.tensor(data_set.class_weight))
