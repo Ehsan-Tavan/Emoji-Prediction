@@ -13,6 +13,8 @@ import torch
 import numpy as np
 from sklearn.metrics import precision_recall_fscore_support, f1_score
 from emoji_prediction.tools.evaluation_helper import categorical_accuracy
+from emoji_prediction.config.cnn_config import DEVICE
+
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -22,7 +24,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/05/2020"
+__date__ = "11/17/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -62,7 +64,7 @@ def batch_augmentation(text, text_lengths, label, augmentation_class, augmentati
 
 
 def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
-          augmentation_methods=None, lr_decay=True):
+          augmentation_methods=None, lr_decay=False):
     """
     train method is written for train model
     :param model: your creation model
@@ -99,13 +101,13 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
                                              augmentation_class, augmentation_methods)
 
         # predict output
-        predictions = model(text)
+        predictions = model(text.to(DEVICE))
 
         # calculate loss
-        loss = criterion(predictions, label)
+        loss = criterion(predictions, label.to(DEVICE))
 
         # calculate accuracy
-        acc = categorical_accuracy(predictions, label)
+        acc = categorical_accuracy(predictions, label.to(DEVICE))
 
         # back-propagate loss
         loss.backward()
