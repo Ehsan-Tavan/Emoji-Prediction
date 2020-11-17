@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/21/2020"
+__date__ = "11/17/2020"
 
 
 class DeeoMoji(nn.Module):
@@ -86,6 +86,9 @@ class DeeoMoji(nn.Module):
         return attn_weight_matrix
 
     def forward(self, input_batch):
+        # input_batch.size() = [batch_size, sent_len]
+
+        input_batch = input_batch.permute(1, 0)
         # input_batch.size() = [sent_len, batch_size]
 
         embedded = self.embeddings(input_batch)
