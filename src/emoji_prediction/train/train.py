@@ -24,7 +24,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/17/2020"
+__date__ = "11/19/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -61,6 +61,20 @@ def batch_augmentation(text, text_lengths, label, augmentation_class, augmentati
 
     augmented_text, augmented_label = tensor_augmentation_text, tensor_augmentation_label
     return augmented_text, augmented_label
+
+
+def text_augmentation(text, text_lengths, augmentation_class):
+    """
+    text_augmentation method is written for augment input text in evaluation
+    :param text: input text
+    :param text_lengths: text length
+    :param augmentation_class:  augmentation class
+    :return:
+    """
+    augmentation_text = augmentation_class.test_augment(text, text_lengths)
+    augmentation_text.append(text)
+    augmentation_text = torch.FloatTensor(augmentation_text).long()
+    return augmentation_text
 
 
 def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
@@ -123,7 +137,7 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
             logging.info("________________________________________________\n")
 
 
-def evaluate(model, iterator, criterion):
+def evaluate(model, iterator, criterion, augmentation_class=None, augmentation=False):
     """
     evaluate method is written for for evaluate model
     :param model: your creation model
@@ -149,7 +163,18 @@ def evaluate(model, iterator, criterion):
         for batch in iterator:
             # predict input data
             text, text_lengths = batch.text
-            predictions = model(text)
+
+            if augmentation:
+                predictions = list()
+                for sample, length in zip(text.tolist(), text_lengths.tolist()):
+                    augment_sample = text_augmentation(sample, length, augmentation_class)
+                    aug_pred = model(augment_sample.to(DEVICE)).tolist()
+                    res = [sum(i) for i in zip(*aug_pred)]
+                    predictions.append(res)
+                predictions = torch.FloatTensor(predictions)
+
+            else:
+                predictions = model(text)
 
             total_predict.append(predictions.cpu().numpy())
             total_label.append(batch.label.cpu().numpy())
