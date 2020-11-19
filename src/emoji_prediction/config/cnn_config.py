@@ -26,23 +26,23 @@ TRAIN_NORMAL_NO_MENTION_DATA_PATH = "../data/Processed/" \
 TEST_NORMAL_NO_MENTION_DATA_PATH = "../data/Processed/" \
                                    "test_first_categori_no_mention_tweets_normal.csv"
 TRAIN_NORMAL_DATA_PATH = "../data/Processed/" \
-                                    "train_first_categori_tweets_normal_len5_1015114_final.csv"
+                                    "train_first_categori_tweets_normal_5.csv"
 TEST_NORMAL_DATA_PATH = "../data/Processed/" \
-                                   "test_first_categori_tweets_normal_len5_125323_final.csv"
+                                   "train_first_categori_tweets_normal_5.csv"
 VALIDATION_NORMAL_DATA_PATH = "../data/Processed/" \
-                                   "validation_first_categori_tweets_normal_len5_112791_final.csv"
+                                   "train_first_categori_tweets_normal_5.csv"
 
 GLOVE_NEWS_300D = "../data/Embeddings/news_glove_300d_e10.txt"
 SKIPGRAM_NEWS_300D = "../data/Embeddings/skipgram_news_300d_30e.txt"
 CBOW_NEWS_300D = "../data/Embeddings/cbow_news_300d_30e.txt"
 
-LOSS_CURVE_PATH = "../models/ID_5/Curves/loss_curve.png"
-ACC_CURVE_PATH = "../models/ID_5/Curves/accuracy_curve.png"
+LOSS_CURVE_PATH = "../models/tmp/Curves/loss_curve.png"
+ACC_CURVE_PATH = "../models/tmp/Curves/accuracy_curve.png"
 
-TEXT_FIELD_PATH = "../models/ID_5/Fields/text_field"
-LABEL_FIELD_PATH = "../models/ID_5/Fields/label_field"
-LOG_PATH = "../models/ID_5/Logs/log.txt"
-MODEL_PATH = "../models/ID_5/"
+TEXT_FIELD_PATH = "../models/tmp/Fields/text_field"
+LABEL_FIELD_PATH = "../models/tmp/Fields/label_field"
+LOG_PATH = "../models/tmp/Logs/log.txt"
+MODEL_PATH = "../models/tmp/"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
