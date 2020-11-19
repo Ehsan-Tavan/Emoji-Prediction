@@ -158,7 +158,7 @@ class RunModel:
         }
         return augmentation_class, augmentation_methods
 
-    def run(self, adding_noise=False, augmentation=True):
+    def run(self, adding_noise=False, augmentation=True, test_augmentation=False):
         """
         run method is written for running model
         """
@@ -214,7 +214,9 @@ class RunModel:
             acc_dict["validation_acc"].append(valid_log_dict["acc"])
 
             # compute model result on test data
-            test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion)
+            test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion,
+                                     augmentation=test_augmentation,
+                                     augmentation_class=augmentation_class)
 
             losses_dict["test_loss"].append(test_log_dict["loss"])
             acc_dict["test_acc"].append(test_log_dict["acc"])
