@@ -4,5 +4,5 @@
 *.pt
 __pycache__
 *field
-.rar
-.zip
+*.rar
+*.zip
