@@ -194,3 +194,7 @@ class Augmentation:
                 final_text_list.append(text)
         final_text_list.append(input_sequence)
         return final_text_list
+
+    def test_augment(self, input_sequence, input_length):
+        output_sequence = self.split_text(input_sequence, input_length)
+        return output_sequence
