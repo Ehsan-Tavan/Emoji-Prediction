@@ -145,6 +145,31 @@ class Augmentation:
         output_sequence.append(final_sequencce)
         return output_sequence
 
+    @staticmethod
+    def split_text(input_sequence, input_length):
+        """
+        split_text method is written for split sentence
+        :param input_sequence: sequence(=sentence) of word index
+        :param input_length: input sequence(=sentence) length
+        :return:
+            output_sequence: list of sequence(=sentence) of word index
+        """
+        output_sequence = list()
+        inter_sequence = list()
+        input_sequence_tokens = input_sequence[:input_length]
+
+        # split fifty
+        inter_sequence.append(input_sequence_tokens[:int(0.5 * input_length)])
+        inter_sequence.append(input_sequence_tokens[int(0.5 * input_length):])
+        inter_sequence.append(input_sequence_tokens[int(0.25 * input_length): -int(0.25 * input_length)])
+
+        for seq in inter_sequence:
+            for i in range(input_length-(len(seq))):
+                seq.append(1)
+            output_sequence.append(seq + input_sequence[input_length:])
+
+        return output_sequence
+
     def __run__(self, input_sequence, input_length, augmentation_methods):
         """
         __run__ method is written for run augmentation method
