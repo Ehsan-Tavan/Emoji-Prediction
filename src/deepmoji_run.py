@@ -65,9 +65,9 @@ class RunModel:
         return data_set
 
     @staticmethod
-    def load_model(data_set):
+    def init_model(data_set):
         """
-        load_model method is written for loading model and
+        init_model method is written for loading model and
         define loss function and optimizer
         :param data_set:
         :return:
