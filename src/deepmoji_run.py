@@ -158,12 +158,12 @@ class RunModel:
         }
         return augmentation_class, augmentation_methods
 
-    def run(self, adding_noise=False, augmentation=True):
+    def run(self, adding_noise=False, augmentation=True, test_augmentation=False):
         """
         run method is written for running model
         """
         data_set = self.load_data_set()
-        model, criterion, optimizer = self.load_model(data_set)
+        model, criterion, optimizer = self.init_model(data_set)
 
         best_validation_loss = float("inf")
         best_test_f_score = 0.0
@@ -179,7 +179,6 @@ class RunModel:
 
         augmentation_class = None
         augmentation_methods = None
-
         # call augmentation class
         if augmentation:
             augmentation_class, augmentation_methods = self.create_augmentation(data_set)
@@ -187,7 +186,6 @@ class RunModel:
         # start training model
         for epoch in range(N_EPOCHS):
             start_time = time.time()
-            # train model on train data
 
             # adding noise to fully connected layers
             if adding_noise:
@@ -216,7 +214,9 @@ class RunModel:
             acc_dict["validation_acc"].append(valid_log_dict["acc"])
 
             # compute model result on test data
-            test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion)
+            test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion,
+                                     augmentation=test_augmentation,
+                                     augmentation_class=augmentation_class)
 
             losses_dict["test_loss"].append(test_log_dict["loss"])
             acc_dict["test_acc"].append(test_log_dict["acc"])
