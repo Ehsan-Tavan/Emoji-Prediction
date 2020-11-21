@@ -184,7 +184,7 @@ def evaluate(model, iterator, criterion, augmentation_class=None, augmentation=F
                     aug_pred = model(augment_sample.to(DEVICE)).tolist()
                     res = [sum(i)/4 for i in zip(*aug_pred)]
                     predictions.append(res)
-                predictions = torch.FloatTensor(predictions)
+                predictions = torch.FloatTensor(predictions).to(DEVICE)
 
             else:
                 predictions = model(text)
