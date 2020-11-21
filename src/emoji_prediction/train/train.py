@@ -30,8 +30,20 @@ logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
 
 
-def exp_lr_scheduler(optimizer, epoch, lr_decay=0.3, lr_decay_epoch=2):
-    """Decay learning rate by a factor of lr_decay every lr_decay_epoch epochs"""
+def exp_lr_scheduler(optimizer, epoch, lr_decay=0.3, lr_decay_epoch=2, number_of_decay=5):
+    """
+    Decay learning rate by a factor of lr_decay every lr_decay_epoch epochs
+    :param optimizer: input optimizer
+    :param epoch: epoch number
+    :param lr_decay: the rate of reduction, multiplied to learning_rate
+    :param lr_decay_epoch: epoch number for decay
+    :param number_of_decay: total number of learning_rate reductions
+    :return:
+        optimizer
+    """
+    if lr_decay_epoch * number_of_decay < epoch:
+        return optimizer
+
     if (epoch+1) % lr_decay_epoch:
         return optimizer
 
