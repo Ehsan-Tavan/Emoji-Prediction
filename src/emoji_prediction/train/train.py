@@ -24,15 +24,16 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/19/2020"
+__date__ = "11/21/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
 
 
-def exp_lr_scheduler(optimizer, epoch, lr_decay=0.3, lr_decay_epoch=2, number_of_decay=5):
+def lr_scheduler(optimizer, epoch, lr_decay=0.3, lr_decay_epoch=2, number_of_decay=5):
     """
-    Decay learning rate by a factor of lr_decay every lr_decay_epoch epochs
+    lr_scheduler method is written for decay learning rate by a factor of lr_decay
+    every lr_decay_epoch epochs
     :param optimizer: input optimizer
     :param epoch: epoch number
     :param lr_decay: the rate of reduction, multiplied to learning_rate
@@ -103,7 +104,7 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
     :param lr_decay: if lr_decay is True learning_decay is use
     """
     if lr_decay:
-        optimizer = exp_lr_scheduler(optimizer, epoch)
+        optimizer = lr_scheduler(optimizer, epoch)
         print(f"On epoch {epoch + 1} learning rate is {optimizer.param_groups[0]['lr']}")
 
     epoch_loss = 0
