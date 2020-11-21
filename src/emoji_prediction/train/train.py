@@ -182,7 +182,7 @@ def evaluate(model, iterator, criterion, augmentation_class=None, augmentation=F
                 for sample, length in zip(text.tolist(), text_lengths.tolist()):
                     augment_sample = text_augmentation(sample, length, augmentation_class)
                     aug_pred = model(augment_sample.to(DEVICE)).tolist()
-                    res = [sum(i) for i in zip(*aug_pred)]
+                    res = [sum(i)/4 for i in zip(*aug_pred)]
                     predictions.append(res)
                 predictions = torch.FloatTensor(predictions)
 
