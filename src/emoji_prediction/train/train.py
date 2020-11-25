@@ -12,6 +12,7 @@ import itertools
 import torch
 import numpy as np
 from collections import Counter
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_recall_fscore_support, f1_score
 from emoji_prediction.tools.evaluation_helper import categorical_accuracy
 from emoji_prediction.config.cnn_config import DEVICE
@@ -222,5 +223,66 @@ def evaluate(model, iterator, criterion, include_length=False):
 
     evaluate_parameters_dict["acc"] = \
         evaluate_parameters_dict["acc"] / len(iterator)
+
+    return evaluate_parameters_dict
+
+
+def evaluate_aug_text(model, iterator, include_length=False, augmentation_class=None):
+    """
+    evaluate_aug_text method is written for text augmentation for test sample
+    :param model: your creation model
+    :param iterator: your iterator
+    :param include_length: if true input length is given to the model
+    :param augmentation_class: augmentation class
+    :return:
+        acc: accuracy of all  data
+        precision: precision for each class of data
+        recall: recall for each class of data
+        f-score: F1-score for each class of data
+        total_fscore: F1-score of all  data
+    """
+    # define evaluate_parameters_dict to save output result
+    evaluate_parameters_dict = {"acc": 0, "precision": 0, "recall": 0,
+                                "f-score": 0, "total_fscore": 0}
+    total_predict = []
+    total_label = []
+
+    def most_frequent(pred):
+        occurence_count = Counter(pred)
+        return occurence_count.most_common(1)[0][0]
+
+    # put model in evaluate model
+    model.eval()
+
+    with torch.no_grad():
+        for batch in iterator:
+            # predict input data
+            text, text_lengths = batch.text
+            label = batch.label
+
+            for sample, length, lbl in zip(text.tolist(), text_lengths.tolist(), label.tolist()):
+                augment_sample = test_augmentation(sample, length, augmentation_class).to(DEVICE)
+                if include_length:
+                    aug_pred = model(augment_sample, length).tolist()
+                else:
+                    aug_pred = model(augment_sample).tolist()
+                res = [np.argmax(i) for i in aug_pred]
+                pred = most_frequent(res)
+                total_predict.append(pred)
+                total_label.append(lbl)
+                # predictions = torch.FloatTensor(predictions).to(DEVICE)
+
+    evaluate_parameters_dict["acc"] = accuracy_score(y_true=total_label, y_pred=total_predict)
+
+    # calculate precision, recall and f_score
+    evaluate_parameters_dict["precision"], evaluate_parameters_dict["recall"],\
+        evaluate_parameters_dict["f-score"], _ = \
+        precision_recall_fscore_support(y_true=total_label,
+                                        y_pred=total_predict)
+
+    # calculate total f-score of all data
+    evaluate_parameters_dict["total_fscore"] = f1_score(y_true=total_label,
+                                                        y_pred=total_predict,
+                                                        average="weighted")
 
     return evaluate_parameters_dict
