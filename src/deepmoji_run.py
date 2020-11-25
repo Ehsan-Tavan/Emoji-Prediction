@@ -199,7 +199,8 @@ class RunModel:
                 train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch,
                       augmentation_class, augmentation_methods, include_length=True)
             else:
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch, include_length=True)
+                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch,
+                      include_length=True)
 
             # compute model result on train data
             train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator"], criterion,
@@ -217,8 +218,6 @@ class RunModel:
 
             # compute model result on test data
             test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion,
-                                     augmentation=test_augmentation,
-                                     augmentation_class=augmentation_class,
                                      include_length=True)
 
             losses_dict["test_loss"].append(test_log_dict["loss"])
