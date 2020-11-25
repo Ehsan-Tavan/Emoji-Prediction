@@ -24,7 +24,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/21/2020"
+__date__ = "11/25/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -91,7 +91,7 @@ def text_augmentation(text, text_lengths, augmentation_class):
 
 
 def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
-          augmentation_methods=None, lr_decay=False):
+          augmentation_methods=None, lr_decay=False, include_length=False):
     """
     train method is written for train model
     :param model: your creation model
@@ -102,6 +102,7 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
     :param augmentation_class: augmentation class
     :param augmentation_methods: augmentation method dictionary
     :param lr_decay: if lr_decay is True learning_decay is use
+    :param include_length: if true input length is given to the model
     """
     if lr_decay:
         optimizer = lr_scheduler(optimizer, epoch)
@@ -130,8 +131,10 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
             label = label.to(DEVICE)
 
         # predict output
-        predictions = model(text, text_lengths)
-
+        if include_length:
+            predictions = model(text, text_lengths)
+        else:
+            predictions = model(text)
         # calculate loss
         loss = criterion(predictions, label)
 
