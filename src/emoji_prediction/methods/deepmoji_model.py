@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/17/2020"
+__date__ = "11/25/2020"
 
 
 class DeeoMoji(nn.Module):
@@ -85,16 +85,28 @@ class DeeoMoji(nn.Module):
 
         return attn_weight_matrix
 
-    def forward(self, input_batch):
+    def forward(self, input_batch, text_length, pack_padded=False):
         # input_batch.size() = [batch_size, sent_len]
 
-        input_batch = input_batch.permute(1, 0)
-        # input_batch.size() = [sent_len, batch_size]
+        if pack_padded:
+            # sort input_batch sentences by their length
+            sorted_text_len, perm_idx = text_length.sort(descending=True)
+            input_batch = input_batch[perm_idx]
+            _, recover_idx = perm_idx.sort(descending=False)
 
         embedded = self.embeddings(input_batch)
         embedded = torch.tanh(embedded)
         embedded = self.dropout["start_dropout"](embedded)
-        # input_batch.size() = [sent_len, batch_size, embedding_dim]
+        # embedded.size() = [batch_size, sent_len, embedding_dim]
+
+        embedded = embedded.permute(1, 0, 2)
+        # embedded.size() = [sent_len, batch_size, embedding_dim]
+
+        # pack padded sequence
+        if pack_padded:
+            embedded = nn.utils.rnn.pack_padded_sequence(embedded,
+                                                         lengths=sorted_text_len.tolist(),
+                                                         batch_first=True)
 
         output_1, (_, _) = self.lstm_1(embedded)
         # output_1.size() = [sent_len, batch_size, hid_dim * num_directions]
@@ -116,11 +128,20 @@ class DeeoMoji(nn.Module):
         hidden_matrix = torch.bmm(attn_weight_matrix, all_features)
         # hidden_matrix.size() = [batch_size, 1, (2 * hid_dim * num_directions) + embedding_dim]
 
+        # unpack sequence
+        if pack_padded:
+            hidden_matrix, _ = nn.utils.rnn.pad_packed_sequence(hidden_matrix)
+
         hidden_matrix = self.dropout["final_dropout"](hidden_matrix.squeeze(1))
+        print(hidden_matrix.size())
 
         # hidden_matrix = self.dropout["final_dropout"](
         #     hidden_matrix.view(-1, hidden_matrix.size()[1] * hidden_matrix.size()[2])
         # )
         # hidden_matrix.size() = [batch_size, r * ((2 * hid_dim * num_directions) + embedding_dim)]
 
-        return self.output(hidden_matrix)
+        pred = self.output(hidden_matrix).permute(1, 0, 2)
+        print(pred.size())
+        if pack_padded:
+            pred = pred[recover_idx]
+        return pred
