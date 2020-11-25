@@ -128,7 +128,7 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
                                              augmentation_class, augmentation_methods)
 
         # predict output
-        predictions = model(text.to(DEVICE))
+        predictions = model(text.to(DEVICE), text_lengths)
 
         # calculate loss
         loss = criterion(predictions, label.to(DEVICE))
