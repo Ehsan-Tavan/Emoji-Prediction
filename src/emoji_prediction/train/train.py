@@ -156,8 +156,7 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
             logging.info("________________________________________________\n")
 
 
-def evaluate(model, iterator, criterion, augmentation_class=None, augmentation=False,
-             include_length=False):
+def evaluate(model, iterator, criterion, include_length=False):
     """
     evaluate method is written for for evaluate model
     :param model: your creation model
@@ -185,23 +184,10 @@ def evaluate(model, iterator, criterion, augmentation_class=None, augmentation=F
             # predict input data
             text, text_lengths = batch.text
 
-            if augmentation:
-                predictions = list()
-                for sample, length in zip(text.tolist(), text_lengths.tolist()):
-                    augment_sample = test_augmentation(sample, length, augmentation_class).to(DEVICE)
-                    if include_length:
-                        aug_pred = model(augment_sample, length).tolist()
-                    else:
-                        aug_pred = model(augment_sample).tolist()
-                    res = [sum(i)/4 for i in zip(*aug_pred)]
-                    predictions.append(res)
-                predictions = torch.FloatTensor(predictions).to(DEVICE)
-
+            if include_length:
+                predictions = model(text, text_lengths)
             else:
-                if include_length:
-                    predictions = model(text, text_lengths)
-                else:
-                    predictions = model(text)
+                predictions = model(text)
 
             total_predict.append(predictions.cpu().numpy())
             total_label.append(batch.label.cpu().numpy())
