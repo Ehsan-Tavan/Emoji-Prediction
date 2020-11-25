@@ -101,8 +101,8 @@ def model_result_save(log_file, train_log_dict, valid_log_dict, test_log_dict):
     :param test_log_dict: dictionary of test data result
     """
     # log_file.write(f"Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s\n")
-    log_file.write(f"\tTrain Loss: {train_log_dict['loss']:.4f} | "
-                   f"Train Acc: {train_log_dict['acc'] * 100:.2f}%\n")
+    log_file.write(f"\tTrain. Loss: {train_log_dict['loss']:.4f} | "
+                   f"Train. Acc: {train_log_dict['acc'] * 100:.2f}%\n")
     log_file.write(f"\t Val. Loss: {valid_log_dict['loss']:.4f} |  "
                    f"Val. Acc: {valid_log_dict['acc'] * 100:.2f}%\n")
     log_file.write(f"\t Test. Loss: {test_log_dict['loss']:.4f} |  "
@@ -125,3 +125,16 @@ def model_result_save(log_file, train_log_dict, valid_log_dict, test_log_dict):
 
     log_file.write("____________________________________________________________\n")
     log_file.flush()
+
+
+def test_aug_result_save(log_file, log_dict):
+    """
+    test_aug_result_save method is writen for save model result on test augmentation
+    :param log_file: text log file
+    :param log_dict: dictionary of test augmentation result
+    """
+    log_file.write(f"Test augmentation. Acc: {log_dict['acc'] * 100:.2f}%\n")
+    log_file.write(f"\t Test augmentation. Precision: {log_dict['precision']}\n")
+    log_file.write(f"\t Test augmentation. Recall: {log_dict['recall']}\n")
+    log_file.write(f"\t Test augmentation. F1_Score: {log_dict['f-score']}\n")
+    log_file.write(f"\t Test augmentation. Total F1 score: {log_dict['total_fscore']}\n")
