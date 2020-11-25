@@ -90,6 +90,7 @@ def test_aug_result_log(log_dict):
     logging.info(f"\t Test augmentation. Recall: {log_dict['recall']}")
     logging.info(f"\t Test augmentation. F1_Score: {log_dict['f-score']}")
     logging.info(f"\t Test augmentation. Total F1 score: {log_dict['total_fscore']}")
+    logging.info("____________________________________________________________\n")
 
 
 def model_result_save(log_file, train_log_dict, valid_log_dict, test_log_dict):
@@ -138,3 +139,5 @@ def test_aug_result_save(log_file, log_dict):
     log_file.write(f"\t Test augmentation. Recall: {log_dict['recall']}\n")
     log_file.write(f"\t Test augmentation. F1_Score: {log_dict['f-score']}\n")
     log_file.write(f"\t Test augmentation. Total F1 score: {log_dict['total_fscore']}\n")
+    log_file.write("____________________________________________________________\n")
+    log_file.flush()
