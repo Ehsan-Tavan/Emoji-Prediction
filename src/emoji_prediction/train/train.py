@@ -11,6 +11,7 @@ import logging
 import itertools
 import torch
 import numpy as np
+from collections import Counter
 from sklearn.metrics import precision_recall_fscore_support, f1_score
 from emoji_prediction.tools.evaluation_helper import categorical_accuracy
 from emoji_prediction.config.cnn_config import DEVICE
@@ -76,9 +77,9 @@ def batch_augmentation(text, text_lengths, label, augmentation_class, augmentati
     return augmented_text, augmented_label
 
 
-def text_augmentation(text, text_lengths, augmentation_class):
+def test_augmentation(text, text_lengths, augmentation_class):
     """
-    text_augmentation method is written for augment input text in evaluation
+    test_augmentation method is written for augment input text in evaluation
     :param text: input text
     :param text_lengths: text length
     :param augmentation_class:  augmentation class
@@ -187,7 +188,7 @@ def evaluate(model, iterator, criterion, augmentation_class=None, augmentation=F
             if augmentation:
                 predictions = list()
                 for sample, length in zip(text.tolist(), text_lengths.tolist()):
-                    augment_sample = text_augmentation(sample, length, augmentation_class).to(DEVICE)
+                    augment_sample = test_augmentation(sample, length, augmentation_class).to(DEVICE)
                     if include_length:
                         aug_pred = model(augment_sample, length).tolist()
                     else:
