@@ -17,7 +17,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/05/2020"
+__date__ = "11/25/2020"
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
 RAW_DATA_PATH = "../data/Raw/first_categori_tweets.csv"
@@ -43,6 +43,7 @@ CBOW_NEWS_300D = "../data/Embeddings/cbow_news_300d_30e.txt"
 TEXT_FIELD_PATH = "../models/ID_7/Fields/text_field"
 LABEL_FIELD_PATH = "../models/ID_7/Fields/label_field"
 LOG_PATH = "../models/ID_7/Logs/log.txt"
+TEST_AUG_LOG_PATH = "../models/ID_7/Logs/test_aug_log.txt"
 MODEL_PATH = "../models/ID_7/"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
