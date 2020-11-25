@@ -34,7 +34,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/17/2020"
+__date__ = "11/25/2020"
 
 
 logging.basicConfig(
@@ -158,7 +158,7 @@ class RunModel:
         }
         return augmentation_class, augmentation_methods
 
-    def run(self, adding_noise=False, augmentation=True, test_augmentation=False):
+    def run(self, adding_noise=False, augmentation=False, test_augmentation=False):
         """
         run method is written for running model
         """
@@ -197,18 +197,20 @@ class RunModel:
             # train model on train data
             if augmentation:
                 train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch,
-                      augmentation_class, augmentation_methods)
+                      augmentation_class, augmentation_methods, include_length=True)
             else:
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
+                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch, include_length=True)
 
             # compute model result on train data
-            train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator"], criterion)
+            train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator"], criterion,
+                                      include_length=True)
 
             losses_dict["train_loss"].append(train_log_dict["loss"])
             acc_dict["train_acc"].append(train_log_dict["acc"])
 
             # compute model result on validation data
-            valid_log_dict = evaluate(model, data_set.iterator_dict["valid_iterator"], criterion)
+            valid_log_dict = evaluate(model, data_set.iterator_dict["valid_iterator"], criterion,
+                                      include_length=True)
 
             losses_dict["validation_loss"].append(valid_log_dict["loss"])
             acc_dict["validation_acc"].append(valid_log_dict["acc"])
@@ -216,7 +218,8 @@ class RunModel:
             # compute model result on test data
             test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion,
                                      augmentation=test_augmentation,
-                                     augmentation_class=augmentation_class)
+                                     augmentation_class=augmentation_class,
+                                     include_length=True)
 
             losses_dict["test_loss"].append(test_log_dict["loss"])
             acc_dict["test_acc"].append(test_log_dict["acc"])
