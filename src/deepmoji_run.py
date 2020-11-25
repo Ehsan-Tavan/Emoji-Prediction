@@ -17,14 +17,14 @@ from torch import optim
 from torch import nn
 from emoji_prediction.utils.data_util import DataSet, init_weights
 from emoji_prediction.methods.deepmoji_model import DeeoMoji
-from emoji_prediction.train.train import train, evaluate
+from emoji_prediction.train.train import train, evaluate, evaluate_aug_text
 from emoji_prediction.utils.augmentation import Augmentation
 from emoji_prediction.tools.log_helper import count_parameters, process_time,\
-    model_result_log, model_result_save
+    model_result_log, model_result_save, test_aug_result_log, test_aug_result_save
 from emoji_prediction.config.deepmoji_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D, EMBEDDING_DIM,\
     DEVICE, N_EPOCHS, MODEL_PATH, START_DROPOUT, FINAL_DROPOUT, LSTM_HIDDEN_DIM, BIDIRECTIONAL,\
-    LOSS_CURVE_PATH, ACC_CURVE_PATH
+    LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -168,6 +168,9 @@ class RunModel:
         best_validation_loss = float("inf")
         best_test_f_score = 0.0
 
+        best_val_loss_model = ""
+        best_test_f_score_model = ""
+
         losses_dict = dict()
         acc_dict = dict()
         losses_dict["train_loss"] = []
@@ -234,6 +237,8 @@ class RunModel:
                 torch.save(model.state_dict(),
                            MODEL_PATH + f"model_epoch{epoch + 1}_loss_"
                            f"{valid_log_dict['loss']}.pt")
+                best_val_loss_model = f"model_epoch{epoch + 1}_loss_" \
+                    f"{valid_log_dict['loss']}.pt"
 
             # save model when fscore in test data is increase
             if test_log_dict["total_fscore"] > best_test_f_score:
@@ -241,6 +246,8 @@ class RunModel:
                 torch.save(model.state_dict(),
                            MODEL_PATH + f"model_epoch{epoch + 1}"
                            f"_fscore_{test_log_dict['total_fscore']}.pt")
+                best_test_f_score_model = f"model_epoch{epoch + 1}" \
+                    f"_fscore_{test_log_dict['total_fscore']}.pt"
 
             # show model result
             logging.info(f"Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s")
@@ -254,11 +261,47 @@ class RunModel:
         # save final model
         torch.save(model.state_dict(), MODEL_PATH + "final_model.pt")
 
+        # test augmentation
+        if test_augmentation:
+            self.eval_test_augmentation(best_val_loss_model=best_val_loss_model,
+                                        best_test_f_score_model=best_test_f_score_model,
+                                        data_set=data_set, aug_class=augmentation_class)
+
         # plot curve
         self.draw_curves(train_acc=acc_dict["train_acc"], validation_acc=acc_dict["validation_acc"],
                          test_acc=acc_dict["test_acc"], train_loss=losses_dict["train_loss"],
                          validation_loss=losses_dict["validation_loss"],
                          test_loss=losses_dict["test_loss"])
+
+    def eval_test_augmentation(self, best_val_loss_model, best_test_f_score_model, data_set, aug_class):
+        """
+        eval_test_augmentation method is written for test augmentation
+        :param best_val_loss_model: model path
+        :param best_test_f_score_model: model path
+        :param data_set: data_set class
+        :param aug_class: augmentation class
+        """
+        log_file = open(TEST_AUG_LOG_PATH, "w")
+        model, _, _ = self.init_model(data_set)
+        model.load_state_dict(torch.load(MODEL_PATH + best_val_loss_model, map_location=DEVICE))
+        evaluate_parameters_dict = evaluate_aug_text(model=model, include_length=True,
+                                                     iterator=data_set.iterator_dict["test_iterator"],
+                                                     augmentation_class=aug_class)
+
+        test_aug_result_log(evaluate_parameters_dict)
+        log_file.write("*****************best_val_loss_model*****************\n")
+        log_file.flush()
+        test_aug_result_save(log_file, evaluate_parameters_dict)
+
+        model, _, _ = self.init_model(data_set)
+        model.load_state_dict(torch.load(MODEL_PATH + best_test_f_score_model, map_location=DEVICE))
+        evaluate_parameters_dict = evaluate_aug_text(model=model, include_length=True,
+                                                     iterator=data_set.iterator_dict["test_iterator"],
+                                                     augmentation_class=aug_class)
+        test_aug_result_log(evaluate_parameters_dict)
+        log_file.write("*****************best_test_f_score_model*****************\n")
+        log_file.flush()
+        test_aug_result_save(log_file, evaluate_parameters_dict)
 
 
 if __name__ == "__main__":
