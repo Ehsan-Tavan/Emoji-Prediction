@@ -126,12 +126,14 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
         if augmentation_class is not None:
             text, label = batch_augmentation(text, text_lengths, label,
                                              augmentation_class, augmentation_methods)
+            text = text.to(DEVICE)
+            label = label.to(DEVICE)
 
         # predict output
-        predictions = model(text.to(DEVICE), text_lengths)
+        predictions = model(text, text_lengths)
 
         # calculate loss
-        loss = criterion(predictions, label.to(DEVICE))
+        loss = criterion(predictions, label)
 
         # calculate accuracy
         acc = categorical_accuracy(predictions, label.to(DEVICE))
