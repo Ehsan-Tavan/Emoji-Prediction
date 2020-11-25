@@ -139,5 +139,5 @@ def test_aug_result_save(log_file, log_dict):
     log_file.write(f"\t Test augmentation. Recall: {log_dict['recall']}\n")
     log_file.write(f"\t Test augmentation. F1_Score: {log_dict['f-score']}\n")
     log_file.write(f"\t Test augmentation. Total F1 score: {log_dict['total_fscore']}\n")
-    log_file.write("____________________________________________________________\n")
+    log_file.write("___________________________________________________________\n")
     log_file.flush()
