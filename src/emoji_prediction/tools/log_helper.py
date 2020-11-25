@@ -79,6 +79,19 @@ def model_result_log(train_log_dict, valid_log_dict, test_log_dict):
     logging.info("_____________________________________________________________________\n")
 
 
+def test_aug_result_log(log_dict):
+    """
+    test_aug_result_log method is writen for show model result on test augmentation
+    :param log_dict: dictionary of test augmentation result
+    """
+    logging.info(f"\t Test augmentation. Acc: {log_dict['acc'] * 100:.2f}")
+
+    logging.info(f"\t Test augmentation. Precision: {log_dict['precision']}")
+    logging.info(f"\t Test augmentation. Recall: {log_dict['recall']}")
+    logging.info(f"\t Test augmentation. F1_Score: {log_dict['f-score']}")
+    logging.info(f"\t Test augmentation. Total F1 score: {log_dict['total_fscore']}")
+
+
 def model_result_save(log_file, train_log_dict, valid_log_dict, test_log_dict):
     """
     model_result_save method is writen for save model result on each epoch
