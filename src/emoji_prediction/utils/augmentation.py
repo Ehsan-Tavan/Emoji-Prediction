@@ -19,7 +19,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/14/2020"
+__date__ = "11/25/2020"
 
 
 class Augmentation:
@@ -177,7 +177,7 @@ class Augmentation:
         :param input_length: input sequence(=sentence) length
         :param augmentation_methods: augmentation method dictionary
         :return:
-            final_text_list: list of all augmentation sequence(=sentence)
+            final_text_list: list of all augmented sequence(=sentence)
         """
         final_text_list = list()
         if augmentation_methods["delete_randomly"]:
@@ -196,5 +196,17 @@ class Augmentation:
         return final_text_list
 
     def test_augment(self, input_sequence, input_length):
-        output_sequence = self.split_text(input_sequence, input_length)
-        return output_sequence
+        """
+        test_augment method is written for augment text for evaluation method
+        :param input_sequence: sequence(=sentence) of word index
+        :param input_length: input sequence(=sentence) length
+        :return:
+            output_sequence: list of all augmented sequence(=sentence)
+        """
+        output_sequence = list()
+        # repeat augmentation for 10 times
+        for i in range(10):
+            augment_text = self.replace_similar_words(input_sequence, input_length)
+            for text in augment_text:
+                output_sequence.append(text)
+        return output_sequence  # contain 20 sentence
