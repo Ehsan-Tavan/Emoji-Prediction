@@ -4,7 +4,7 @@
 # pylint: disable-msg=no-member
 
 """
-cnn_config.py is written for cnn model model
+cnn_config.py is written for cnn model
 """
 
 import torch
@@ -47,7 +47,7 @@ MODEL_PATH = "../models/tmp/"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 N_EPOCHS = 30
-BATCH_SIZE = 100
+BATCH_SIZE = 256
 EMBEDDING_DIM = 300
 FILTER_SIZE = [3, 4, 5]
 N_FILTERS = 256
