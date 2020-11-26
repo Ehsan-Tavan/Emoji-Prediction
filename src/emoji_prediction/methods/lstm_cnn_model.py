@@ -57,7 +57,7 @@ class LstmCnn(nn.Module):
             for fs in kwargs["filter_sizes"]
         ])
 
-        fc_input_dim = kwargs["n_filters"] * len(kwargs["(filter_sizes)"])
+        fc_input_dim = kwargs["n_filters"] * len(kwargs["filter_sizes"])
         self.fully_connected_layers = nn.Sequential(
             nn.Linear(in_features=fc_input_dim,
                       out_features=256),
