@@ -41,7 +41,7 @@ class CNN(nn.Module):
                 nn.Conv2d(in_channels=1,
                           out_channels=kwargs["n_filters"],
                           kernel_size=(fs, kwargs["embedding_dim"])),
-                nn.BatchNorm2d(kwargs["n_filters"]),
+                # nn.BatchNorm2d(kwargs["n_filters"]),
                 nn.ReLU(),
                 nn.Dropout(kwargs["middle_dropout"])
             )
