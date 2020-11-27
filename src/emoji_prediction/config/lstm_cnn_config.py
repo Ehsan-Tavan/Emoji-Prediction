@@ -16,7 +16,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/26/2020"
+__date__ = "11/27/2020"
 
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
@@ -42,6 +42,7 @@ ACC_CURVE_PATH = "../models/tmp/Curves/accuracy_curve.png"
 TEXT_FIELD_PATH = "../models/tmp/Fields/text_field"
 LABEL_FIELD_PATH = "../models/tmp/Fields/label_field"
 LOG_PATH = "../models/tmp/Logs/log.txt"
+TEST_AUG_LOG_PATH = "../models/tmp/Logs/test_aug_log.txt"
 MODEL_PATH = "../models/tmp/"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
