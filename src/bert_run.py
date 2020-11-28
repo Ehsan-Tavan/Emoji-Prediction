@@ -164,8 +164,7 @@ class RunModel:
             start_time = time.time()
 
             # train model on train data
-            train_loss, train_acc = \
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
+            train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
 
             # compute model result on train data
             train_log_dict, train_evaluate_class_dict = evaluate(model,
