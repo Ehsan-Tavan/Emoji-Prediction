@@ -173,7 +173,7 @@ class RunModel:
             acc_dict["train_acc"].append(train_log_dict["acc"])
 
             # compute model result on dev data
-            dev_log_dict = evaluate(model, data_set.iterator_dict["dev_iterator"], criterion)
+            dev_log_dict = evaluate(model, data_set.iterator_dict["validation_iterator"], criterion)
 
             losses_dict["dev_loss"].append(dev_log_dict["loss"])
             acc_dict["dev_acc"].append(dev_log_dict["acc"])
