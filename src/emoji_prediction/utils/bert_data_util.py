@@ -170,9 +170,6 @@ class DataSet:
         # count number of unique vocab in all fields
         self.num_vocab_dict = self.calculate_num_vocabs(self.dictionary_fields)
 
-        # get pad index in all fields
-        self.pad_idx_dict = self.find_pad_index(self.dictionary_fields)
-
         # saving fields
         self.save_fields(self.dictionary_fields, model_config)
 
@@ -241,17 +238,3 @@ class DataSet:
         num_vocab_dict = dict()
         num_vocab_dict["num_label"] = len(dictionary_fields["label_field"].vocab)
         return num_vocab_dict
-
-    @staticmethod
-    def find_pad_index(dictionary_fields):
-        """
-        This method find pad index in each field
-        :param dictionary_fields: dictionary of fields
-        :return:
-            pad_idx_dict: dictionary of pad index in each field
-        """
-        pad_idx_dict = dict()
-        pad_idx_dict["label_pad_idx"] = dictionary_fields["label_field"]\
-            .vocab.stoi[dictionary_fields["label_field"].pad_token]
-
-        return pad_idx_dict
