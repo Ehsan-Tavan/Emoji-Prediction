@@ -24,7 +24,8 @@ from emoji_prediction.tools.log_helper import count_parameters, process_time,\
 from emoji_prediction.config.deepmoji_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D, EMBEDDING_DIM,\
     DEVICE, N_EPOCHS, MODEL_PATH, START_DROPOUT, FINAL_DROPOUT, LSTM_HIDDEN_DIM, BIDIRECTIONAL,\
-    LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH
+    LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH, LR_DECAY, ADDING_NOISE, TRAIN_AUGMENTATION,\
+    TEST_AUGMENTATION
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -34,7 +35,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/25/2020"
+__date__ = "11/28/2020"
 
 
 logging.basicConfig(
@@ -158,7 +159,7 @@ class RunModel:
         }
         return augmentation_class, augmentation_methods
 
-    def run(self, adding_noise=False, augmentation=False, test_augmentation=False):
+    def run(self, adding_noise=False, lr_decay=False, augmentation=False, test_augmentation=False):
         """
         run method is written for running model
         """
@@ -199,29 +200,32 @@ class RunModel:
 
             # train model on train data
             if augmentation:
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch,
-                      augmentation_class, augmentation_methods, include_length=True)
+                train(model=model, iterator=data_set.iterator_dict["train_iterator"],
+                      optimizer=optimizer, criterion=criterion, epoch=epoch,
+                      augmentation_class=augmentation_class, augmentation_methods=augmentation_methods,
+                      lr_decay=lr_decay, include_length=True)
             else:
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch,
-                      include_length=True)
+                train(model=model, iterator=data_set.iterator_dict["train_iterator"],
+                      optimizer=optimizer, criterion=criterion, epoch=epoch,
+                      lr_decay=lr_decay, include_length=True)
 
             # compute model result on train data
-            train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator"], criterion,
-                                      include_length=True)
+            train_log_dict = evaluate(model=model, iterator=data_set.iterator_dict["train_iterator"],
+                                      criterion=criterion, include_length=True)
 
             losses_dict["train_loss"].append(train_log_dict["loss"])
             acc_dict["train_acc"].append(train_log_dict["acc"])
 
             # compute model result on validation data
-            valid_log_dict = evaluate(model, data_set.iterator_dict["valid_iterator"], criterion,
-                                      include_length=True)
+            valid_log_dict = evaluate(model=model, iterator=data_set.iterator_dict["valid_iterator"],
+                                      criterion=criterion, include_length=True)
 
             losses_dict["validation_loss"].append(valid_log_dict["loss"])
             acc_dict["validation_acc"].append(valid_log_dict["acc"])
 
             # compute model result on test data
-            test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion,
-                                     include_length=True)
+            test_log_dict = evaluate(model=model, iterator=data_set.iterator_dict["test_iterator"],
+                                     criterion=criterion, include_length=True)
 
             losses_dict["test_loss"].append(test_log_dict["loss"])
             acc_dict["test_acc"].append(test_log_dict["acc"])
@@ -306,4 +310,5 @@ class RunModel:
 
 if __name__ == "__main__":
     MYCLASS = RunModel()
-    MYCLASS.run()
+    MYCLASS.run(adding_noise=ADDING_NOISE, lr_decay=LR_DECAY,
+                augmentation=TRAIN_AUGMENTATION, test_augmentation=TEST_AUGMENTATION)
