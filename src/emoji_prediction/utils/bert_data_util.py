@@ -179,9 +179,9 @@ class DataSet:
         train_data = data.Dataset(train_examples, data_fields)
 
         logging.info("Start creating validation example.")
-        validation_examples = [data.Example.fromlist(i, data_fields) for i in
-                               self.read_csv_file(self.files_address["validation_data_path"]).values.tolist()]
-        validation_data = data.Dataset(validation_examples, data_fields)
+        valid_examples = [data.Example.fromlist(i, data_fields) for i in
+                          self.read_csv_file(self.files_address["validation_data_path"]).values.tolist()]
+        valid_data = data.Dataset(valid_examples, data_fields)
 
         logging.info("Start creating test example.")
         test_examples = [data.Example.fromlist(i, data_fields) for i in
@@ -200,7 +200,7 @@ class DataSet:
         # creating iterators for training model
         logging.info("Start creating iterator.")
         self.iterator_dict = self.creating_iterator(train_data=train_data,
-                                                    validation_data=validation_data,
+                                                    valid_data=valid_data,
                                                     test_data=test_data)
 
         # create required variables for online augmentation
@@ -208,7 +208,7 @@ class DataSet:
             self.vocabs, self.word2idx, self.idx2word = self.create_vocab_dictionary(bert_tokenizer)
 
         logging.info("Loaded %d train examples", len(train_data))
-        logging.info("Loaded %d validation examples", len(validation_data))
+        logging.info("Loaded %d validation examples", len(valid_data))
         logging.info("Loaded %d test examples", len(test_data))
 
     @staticmethod
@@ -228,11 +228,11 @@ class DataSet:
                                                                sort=False,
                                                                shuffle=True,
                                                                device=DEVICE),
-                         "validation_iterator": data.BucketIterator(kwargs["validation_data"],
-                                                                    batch_size=BATCH_SIZE,
-                                                                    sort=False,
-                                                                    shuffle=True,
-                                                                    device=DEVICE),
+                         "valid_iterator": data.BucketIterator(kwargs["valid_data"],
+                                                               batch_size=BATCH_SIZE,
+                                                               sort=False,
+                                                               shuffle=True,
+                                                               device=DEVICE),
                          "test_iterator": data.BucketIterator(kwargs["test_data"],
                                                               batch_size=BATCH_SIZE,
                                                               sort=False,
