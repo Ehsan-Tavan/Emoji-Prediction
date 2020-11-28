@@ -77,7 +77,7 @@ class Encoder:
     """
     In this class we implement encoder of transformer
     """
-    def __init__(self, input_dim,
+    def __init__(self, vocab_size,
                  hid_dim,
                  n_layers,
                  n_heads,
@@ -86,7 +86,7 @@ class Encoder:
                  device,
                  max_length=100):
         super().__init__()
-        self.tok_embedding = nn.Embedding(num_embeddings=input_dim,
+        self.tok_embedding = nn.Embedding(num_embeddings=vocab_size,
                                           embedding_dim=hid_dim)
         self.pos_embedding = nn.Embedding(num_embeddings=max_length,
                                           embedding_dim=hid_dim)
