@@ -97,7 +97,7 @@ class DataSet:
         required variables for online augmentation
         :param tokenizer: bert tokenizer
         :return:
-            vocabs: list of all Common words in our data and bert model
+            vocabs: list of all Common words in our dataSet and bert model
             word2idx: word to index dictionary
             idx2word: index to word dictionary
         """
