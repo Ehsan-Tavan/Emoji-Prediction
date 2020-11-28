@@ -165,8 +165,7 @@ class RunModel:
 
             # train model on train data
             train_loss, train_acc = \
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion,
-                      data_set.pad_idx_dict["label_pad_idx"])
+                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
 
             # compute model result on train data
             train_log_dict, train_evaluate_class_dict = evaluate(model,
