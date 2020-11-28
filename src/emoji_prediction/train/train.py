@@ -156,6 +156,12 @@ def train(model, iterator, optimizer, criterion, epoch, augmentation_class=None,
             logging.info(f"\t loss : {(epoch_loss/n_batch):.4f}")
             logging.info("________________________________________________\n")
 
+    # calculate final loss and accuracy for all data in one epoch
+    final_loss = epoch_loss / len(iterator)
+    final_acc = epoch_acc / len(iterator)
+
+    return final_loss, final_acc
+
 
 def evaluate(model, iterator, criterion, include_length=False):
     """
