@@ -11,6 +11,7 @@ bert_data_util.py is writen for creating iterator and save field
 import logging
 import torch
 import pandas as pd
+import functools
 from transformers import AutoConfig, AutoTokenizer
 from torchtext import data
 from emoji_prediction.config.bert_config import DEVICE, BATCH_SIZE, SEN_LEN
@@ -58,7 +59,7 @@ class DataSet:
         return input_df[:500]
 
     @staticmethod
-    def load_bert_tokenizer(model_config, dl=True, save=True):
+    def load_bert_tokenizer(model_config, dl=False, save=True):
         """
         load_bert_tokenizer method is written for download and save bert tokenizer
         :param model_config: model_config
@@ -114,10 +115,13 @@ class DataSet:
         init_token_idx, eos_token_idx, pad_token_idx, unk_token_idx =\
             self.bert_special_tokens(tokenizer=tokenizer)
 
+        custom_tokenizer = functools.partial(self.tokenize_and_cut,
+                                             tokenizer=tokenizer)
+
         text_field = data.Field(batch_first=True,
                                 fix_length=sen_len,
                                 use_vocab=False,
-                                tokenize=self.tokenize_and_cut,
+                                tokenize=custom_tokenizer,
                                 preprocessing=tokenizer.convert_tokens_to_ids,
                                 init_token=init_token_idx,
                                 eos_token=eos_token_idx,
