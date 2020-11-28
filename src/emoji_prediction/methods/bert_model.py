@@ -21,10 +21,10 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/15/2020"
+__date__ = "11/28/2020"
 
 
-class BERTSentiment(nn.Module):
+class BERTEmoji(nn.Module):
     """
     In this class we implement Bert model for sentiment
     """
@@ -34,7 +34,7 @@ class BERTSentiment(nn.Module):
         self.bert, embedding_dim = self.bert_loader(kwargs["model_config"])
 
         self.fully_connected_layers = nn.Sequential(
-            nn.Linear(in_features=embedding_dim,
+            nn.Linear(in_features=kwargs["sen_len"]*768,
                       out_features=512),
             nn.ReLU(),
             nn.Dropout(kwargs["final_dropout"]),
@@ -46,7 +46,7 @@ class BERTSentiment(nn.Module):
         self.start_dropout = nn.Dropout(kwargs["start_dropout"])
 
     @staticmethod
-    def bert_loader(model_config, dl=True, save=True):
+    def bert_loader(model_config, dl=False, save=True):
         """
         bert_loader method is written for load bert model
         :param model_config: model_config
@@ -59,7 +59,7 @@ class BERTSentiment(nn.Module):
         if dl:
             # download model
             config = AutoConfig.from_pretrained(model_config["url_path"])
-            model = AutoModel.from_pretrained(model_config["url_path"])
+            model = AutoModel.from_pretrained(model_config["url_path"], from_tf=True)
 
             if save:
                 # save model
@@ -80,10 +80,9 @@ class BERTSentiment(nn.Module):
           embedded = self.start_dropout(self.bert(text)[0])
         # embedded.size() = [batch_size, seq_len, emb_dim]
 
-        embedded = embedded.permute(1, 0, 2)
-        # embedded.size() = [sent_len, batch_size, emb_dim]
+        embedded = torch.flatten(embedded, start_dim=1)
 
         predictions = self.fully_connected_layers(embedded)
-        # predictions = [sent_len, batch_size, output_dim]
+        # predictions = [batch_size, output_dim]
 
         return predictions
