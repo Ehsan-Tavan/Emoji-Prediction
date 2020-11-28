@@ -138,9 +138,10 @@ class RunModel:
             augmentation_methods: augmentation method dictionary
 
         """
-        word2idx = data_set.text_field.vocab.stoi
-        idx2word = data_set.text_field.vocab.itos
-        vocabs = list(word2idx.keys())
+        word2idx = data_set.word2idx
+        idx2word = data_set.idx2word
+        vocabs = data_set.vocabs
+
         augmentation_class = Augmentation(word2idx, idx2word, vocabs)
 
         # augmentation method dictionary
@@ -151,7 +152,7 @@ class RunModel:
         }
         return augmentation_class, augmentation_methods
 
-    def run(self, model_name):
+    def run(self, model_name, augmentation=False):
         """
         run method is written for running model
         """
@@ -183,6 +184,13 @@ class RunModel:
         acc_dict["train_acc"] = []
         acc_dict["dev_acc"] = []
         acc_dict["test_acc"] = []
+
+        augmentation_class = None
+        augmentation_methods = None
+
+        # call augmentation class
+        if augmentation:
+            augmentation_class, augmentation_methods = self.create_augmentation(data_set)
 
         # start training model
         for epoch in range(N_EPOCHS):
