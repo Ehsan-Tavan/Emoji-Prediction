@@ -23,8 +23,9 @@ from emoji_prediction.tools.log_helper import count_parameters, process_time,\
     model_result_log, model_result_save, test_aug_result_log, test_aug_result_save
 from emoji_prediction.config.transformer_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D, HID_DIM, ENC_LAYERS,\
-    ENC_HEADS, ENC_PF_DIM, ENC_DROPOUT, DEVICE, N_EPOCHS, MODEL_PATH,\
-    FINAL_DROPOUT, LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH
+    ENC_HEADS, ENC_PF_DIM, ENC_DROPOUT, DEVICE, N_EPOCHS, MODEL_PATH, FINAL_DROPOUT,\
+    LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH, ADDING_NOISE, LR_DECAY,\
+    TRAIN_AUGMENTATION, TEST_AUGMENTATION
 
 
 __author__ = "Ehsan Tavan"
@@ -165,7 +166,7 @@ class RunModel:
         }
         return augmentation_class, augmentation_methods
 
-    def run(self, adding_noise=False, augmentation=False, test_augmentation=False):
+    def run(self, adding_noise=False, lr_decay=False, augmentation=False, test_augmentation=False):
         """
         run method is written for running model
         """
@@ -206,19 +207,25 @@ class RunModel:
 
             # train model on train data
             if augmentation:
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch,
-                      augmentation_class, augmentation_methods)
+                train(model=model, iterator=data_set.iterator_dict["train_iterator"],
+                      optimizer=optimizer, criterion=criterion, epoch=epoch,
+                      augmentation_class=augmentation_class, augmentation_methods=augmentation_methods,
+                      lr_decay=lr_decay)
             else:
-                train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
+                train(model=model, iterator=data_set.iterator_dict["train_iterator"],
+                      optimizer=optimizer, criterion=criterion, epoch=epoch,
+                      lr_decay=lr_decay)
 
             # compute model result on train data
-            train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator"], criterion)
+            train_log_dict = evaluate(model=model, iterator=data_set.iterator_dict["train_iterator"],
+                                      criterion=criterion)
 
             losses_dict["train_loss"].append(train_log_dict["loss"])
             acc_dict["train_acc"].append(train_log_dict["acc"])
 
             # compute model result on validation data
-            valid_log_dict = evaluate(model, data_set.iterator_dict["valid_iterator"], criterion)
+            valid_log_dict = evaluate(model=model, iterator=data_set.iterator_dict["valid_iterator"],
+                                      criterion=criterion)
 
             losses_dict["validation_loss"].append(valid_log_dict["loss"])
             acc_dict["validation_acc"].append(valid_log_dict["acc"])
@@ -309,4 +316,5 @@ class RunModel:
 
 if __name__ == "__main__":
     MYCLASS = RunModel()
-    MYCLASS.run()
+    MYCLASS.run(adding_noise=ADDING_NOISE, lr_decay=LR_DECAY,
+                augmentation=TRAIN_AUGMENTATION, test_augmentation=TEST_AUGMENTATION)
