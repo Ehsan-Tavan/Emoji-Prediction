@@ -265,3 +265,12 @@ def init_weights(model):
     """
     for _, param in model.named_parameters():
         torch.nn.init.normal_(param.data, mean=0, std=0.1)
+
+
+def initialize_weights_xavier_uniform(model):
+    """
+    init_weights method is written for initialize model parameters
+    :param model: input model
+    """
+    if hasattr(model, "weight") and model.weight.dim() > 1:
+        torch.nn.init.xavier_uniform_(m.weight.data)
