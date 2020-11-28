@@ -2,7 +2,9 @@
 *.csv
 *.txt
 *.pt
-__pycache__
-*field
+*.json
+*.bin
 *.rar
 *.zip
+__pycache__
+*field
