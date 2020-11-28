@@ -31,6 +31,11 @@ FINAL_DROPOUT = 0.3
 BATCH_SIZE = 64
 SEN_LEN = 35
 
+ADDING_NOISE = False
+LR_DECAY = False
+TRAIN_AUGMENTATION = False
+TEST_AUGMENTATION = False
+
 TRAIN_NORMAL_DATA_PATH = "../data/Processed/" \
                                     "train_first_categori_tweets_normal_5.csv"
 TEST_NORMAL_DATA_PATH = "../data/Processed/" \
