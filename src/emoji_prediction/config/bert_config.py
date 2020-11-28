@@ -20,7 +20,7 @@ __status__ = "Production"
 __date__ = "11/28/2020"
 
 # select from (bert, parsbert, albert)
-MODEL_NAME = "pasrbert"
+MODEL_NAME = "parsbert"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
