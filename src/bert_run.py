@@ -167,25 +167,19 @@ class RunModel:
             train(model, data_set.iterator_dict["train_iterator"], optimizer, criterion, epoch)
 
             # compute model result on train data
-            train_log_dict, train_evaluate_class_dict = evaluate(model,
-                                                                 data_set.iterator_dict["train_iterator"],
-                                                                 criterion)
+            train_log_dict = evaluate(model, data_set.iterator_dict["train_iterator"], criterion)
 
             losses_dict["train_loss"].append(train_log_dict["loss"])
             acc_dict["train_acc"].append(train_log_dict["acc"])
 
             # compute model result on dev data
-            dev_log_dict, dev_evaluate_class_dict = evaluate(model,
-                                                             data_set.iterator_dict["dev_iterator"],
-                                                             criterion)
+            dev_log_dict = evaluate(model, data_set.iterator_dict["dev_iterator"], criterion)
 
             losses_dict["dev_loss"].append(dev_log_dict["loss"])
             acc_dict["dev_acc"].append(dev_log_dict["acc"])
 
             # compute model result on test data
-            test_log_dict, test_evaluate_class_dict = evaluate(model,
-                                                               data_set.iterator_dict["test_iterator"],
-                                                               criterion)
+            test_log_dict = evaluate(model, data_set.iterator_dict["test_iterator"], criterion)
 
             losses_dict["test_loss"].append(test_log_dict["loss"])
             acc_dict["test_acc"].append(test_log_dict["acc"])
