@@ -198,10 +198,10 @@ class RunModel:
 
             # save model when fscore of test data is increase
             if test_log_dict["total_f_score"] > best_test_f_score:
-                best_test_f_score = test_log_dict["total_f_score"]
+                best_test_f_score = test_log_dict["total_fscore"]
                 torch.save(model.state_dict(),
                            model_config["save_model_path"] + f"model_epoch{epoch + 1}"
-                           f"_fscore_{test_log_dict['total_f_score']}.pt")
+                           f"_fscore_{test_log_dict['total_fscore']}.pt")
 
             # show model result
             logging.info(f"Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s")
