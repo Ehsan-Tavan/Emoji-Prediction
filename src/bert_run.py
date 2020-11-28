@@ -19,6 +19,7 @@ from emoji_prediction.methods.bert_model import BERTEmoji
 from emoji_prediction.utils.bert_data_util import DataSet
 from emoji_prediction.tools.log_helper import count_parameters
 from emoji_prediction.train.train import train, evaluate
+from emoji_prediction.utils.augmentation import Augmentation
 from emoji_prediction.tools.log_helper import process_time, model_result_log, model_result_save
 from emoji_prediction.config.bert_config import MODEL_NAME, TRAIN_NORMAL_DATA_PATH, TEST_NORMAL_DATA_PATH,\
     VALIDATION_NORMAL_DATA_PATH, START_DROPOUT, FINAL_DROPOUT, BERT_CONFIG, PARSBERT_CONFIG, ALBERT_CONFIG,\
@@ -125,6 +126,30 @@ class RunModel:
         plt.xlabel("number of epochs")
         plt.ylabel("accuracy value")
         plt.savefig(model_config["acc_curves_path"])
+
+    @staticmethod
+    def create_augmentation(data_set):
+        """
+        create_augmentation method is written for create augmentation class
+        and define augmentation methods
+        :param data_set: data_set class
+        :return:
+            augmentation_class: augmentation class
+            augmentation_methods: augmentation method dictionary
+
+        """
+        word2idx = data_set.text_field.vocab.stoi
+        idx2word = data_set.text_field.vocab.itos
+        vocabs = list(word2idx.keys())
+        augmentation_class = Augmentation(word2idx, idx2word, vocabs)
+
+        # augmentation method dictionary
+        augmentation_methods = {
+            "delete_randomly": True,
+            "replace_similar_words": True,
+            "swap_token": True
+        }
+        return augmentation_class, augmentation_methods
 
     def run(self, model_name):
         """
