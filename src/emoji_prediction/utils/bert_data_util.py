@@ -119,6 +119,7 @@ class DataSet:
                                              tokenizer=tokenizer)
 
         text_field = data.Field(batch_first=True,
+                                include_lengths=True,
                                 fix_length=sen_len,
                                 use_vocab=False,
                                 tokenize=custom_tokenizer,
