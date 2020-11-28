@@ -17,7 +17,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/25/2020"
+__date__ = "11/28/2020"
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
 RAW_DATA_PATH = "../data/Raw/first_categori_tweets.csv"
