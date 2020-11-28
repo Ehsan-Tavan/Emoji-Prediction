@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/26/2020"
+__date__ = "11/28/2020"
 
 
 class LstmCnn(nn.Module):
@@ -93,6 +93,9 @@ class LstmCnn(nn.Module):
 
         cat = torch.cat((output_2, output_1, embedded), dim=2).permute(1, 0, 2)
         # cat.size() = [batch_size, sent_len, (2 *hid_dim * num_directions) + embedding_dim]
+
+        cat = cat.unsqueeze(1)
+        # cat.size() = [batch_size, 1, sent_len, (2 *hid_dim * num_directions) + embedding_dim]
 
         conved = [conv(cat).squeeze(3) for conv in self.convs]
         # x = (2 * hid_dim * num_directions) + embedding_dim
