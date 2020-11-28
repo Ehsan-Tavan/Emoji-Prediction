@@ -14,7 +14,7 @@ import pandas as pd
 import functools
 from transformers import AutoConfig, AutoTokenizer
 from torchtext import data
-from emoji_prediction.config.bert_config import DEVICE, BATCH_SIZE, SEN_LEN
+from emoji_prediction.config.bert_config import DEVICE, BATCH_SIZE, SEN_LEN, TRAIN_AUGMENTATION
 
 __author__ = "Ehsan Tavan"
 __project__ = "Persian Emoji Prediction"
@@ -44,6 +44,8 @@ class DataSet:
         self.pad_idx_dict = dict()
         self.num_vocab_dict = dict()
         self.dictionary_fields = dict()
+
+        self.vocabs, self.word2idx, self.idx2word = None, None, None
 
     @staticmethod
     def read_csv_file(input_path):
@@ -88,6 +90,27 @@ class DataSet:
         tokens = tokenizer.tokenize(sentence)
         tokens = tokens[:max_input_length - 2]
         return tokens
+
+    def create_vocab_dictionary(self, tokenizer):
+        """
+        create_vocab_dictionary method is written for create
+        required variables for online augmentation
+        :param tokenizer: bert tokenizer
+        :return:
+            vocabs: list of all Common words in our data and bert model
+            word2idx: word to index dictionary
+            idx2word: index to word dictionary
+        """
+        vocabs = list()
+        word2idx = dict()
+        idx2word = dict()
+        input_df = self.read_csv_file(self.files_address["validation_data_path"])
+        for tweet in input_df.tweet:
+            for token in tokenizer.tokenize(tweet):
+                vocabs.append(token)
+                word2idx[token] = tokenizer.convert_tokens_to_ids(token)
+                idx2word[tokenizer.convert_tokens_to_ids(token)] = token
+        return vocabs, word2idx, idx2word
 
     @staticmethod
     def bert_special_tokens(tokenizer):
@@ -179,6 +202,10 @@ class DataSet:
         self.iterator_dict = self.creating_iterator(train_data=train_data,
                                                     validation_data=validation_data,
                                                     test_data=test_data)
+
+        # create required variables for online augmentation
+        if TRAIN_AUGMENTATION:
+            self.vocabs, self.word2idx, self.idx2word = self.create_vocab_dictionary(bert_tokenizer)
 
         logging.info("Loaded %d train examples", len(train_data))
         logging.info("Loaded %d validation examples", len(validation_data))
