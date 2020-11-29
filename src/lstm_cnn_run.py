@@ -292,7 +292,7 @@ class RunModel:
         log_file = open(TEST_AUG_LOG_PATH, "w")
         model, _, _ = self.init_model(data_set)
         model.load_state_dict(torch.load(MODEL_PATH + best_val_loss_model, map_location=DEVICE))
-        evaluate_parameters_dict = evaluate_aug_text(model=model, include_length=True,
+        evaluate_parameters_dict = evaluate_aug_text(model=model, include_length=False,
                                                      iterator=data_set.iterator_dict["test_iterator"],
                                                      augmentation_class=aug_class)
 
@@ -303,7 +303,7 @@ class RunModel:
 
         model, _, _ = self.init_model(data_set)
         model.load_state_dict(torch.load(MODEL_PATH + best_test_f_score_model, map_location=DEVICE))
-        evaluate_parameters_dict = evaluate_aug_text(model=model, include_length=True,
+        evaluate_parameters_dict = evaluate_aug_text(model=model, include_length=False,
                                                      iterator=data_set.iterator_dict["test_iterator"],
                                                      augmentation_class=aug_class)
         test_aug_result_log(evaluate_parameters_dict)
