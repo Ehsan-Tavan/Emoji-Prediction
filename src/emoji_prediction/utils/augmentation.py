@@ -19,7 +19,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/25/2020"
+__date__ = "11/29/2020"
 
 
 class Augmentation:
@@ -209,4 +209,6 @@ class Augmentation:
             augment_text = self.replace_similar_words(input_sequence, input_length)
             for text in augment_text:
                 output_sequence.append(text)
-        return output_sequence  # contain 20 sentence
+        # append input_sequence to final output_sequence
+        output_sequence.append(input_sequence)
+        return output_sequence  # contain 21 sentence
