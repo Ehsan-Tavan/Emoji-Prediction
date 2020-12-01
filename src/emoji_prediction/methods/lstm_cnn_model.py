@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/28/2020"
+__date__ = "12/1/2020"
 
 
 class LstmCnn(nn.Module):
@@ -49,8 +49,7 @@ class LstmCnn(nn.Module):
             nn.Sequential(
                 nn.Conv2d(in_channels=1,
                           out_channels=kwargs["n_filters"],
-                          kernel_size=(fs, kwargs["embedding_dim"] +
-                                       2*2*kwargs["lstm_hidden_dim"])),
+                          kernel_size=(fs, 2*2*kwargs["lstm_hidden_dim"])),
                 nn.ReLU(),
                 nn.Dropout(kwargs["middle_dropout"])
             )
@@ -60,14 +59,7 @@ class LstmCnn(nn.Module):
         fc_input_dim = kwargs["n_filters"] * len(kwargs["filter_sizes"])
         self.fully_connected_layers = nn.Sequential(
             nn.Linear(in_features=fc_input_dim,
-                      out_features=256),
-            nn.ReLU(),
-            nn.Dropout(kwargs["final_dropout"]),
-            nn.Linear(in_features=256, out_features=128),
-            nn.ReLU(),
-            nn.Dropout(kwargs["final_dropout"]),
-            nn.Linear(in_features=128, out_features=kwargs["output_size"])
-        )
+                      out_features=kwargs["output_size"]))
         self.dropout = {"start_dropout": nn.Dropout(kwargs["start_dropout"]),
                         "middle_dropout": nn.Dropout(kwargs["middle_dropout"])}
 
@@ -79,19 +71,19 @@ class LstmCnn(nn.Module):
         embedded = embedded.permute(1, 0, 2)
         # embedded.size() = [sent_len, batch_size, embedding_dim]
 
-        output_1, (_, _) = self.lstm_1(embedded)
+        output_1, (hidden, cell) = self.lstm_1(embedded)
         output_1 = self.dropout["middle_dropout"](nn.ReLU()(output_1))
         # output_1.size() = [sent_len, batch_size, hid_dim * num_directions]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
 
-        output_2, (_, _) = self.lstm_2(output_1)
+        output_2, (_, _) = self.lstm_2(output_1, (hidden, cell))
         output_2 = self.dropout["middle_dropout"](nn.ReLU()(output_2))
         # output_2.size() = [sent_len, batch_size, hid_dim * num_directions]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
 
-        cat = torch.cat((output_2, output_1, embedded), dim=2).permute(1, 0, 2)
+        cat = torch.cat((output_2, output_1), dim=2).permute(1, 0, 2)
         # cat.size() = [batch_size, sent_len, (2 *hid_dim * num_directions) + embedding_dim]
 
         cat = cat.unsqueeze(1)
@@ -105,4 +97,3 @@ class LstmCnn(nn.Module):
         cat_cnn = torch.cat(pooled, dim=1)
         # cat_cnn.size() = [batch size, n_filters * len(filter_sizes)]
         return self.fully_connected_layers(cat_cnn)
-
