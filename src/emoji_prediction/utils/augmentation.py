@@ -58,8 +58,9 @@ class Augmentation:
             for del_time in range(num_selected_token):
                 input_sequence_tokens.pop(random.randrange(len(input_sequence_tokens)))
 
-        for i in range(num_selected_token):
-            input_sequence_tokens.append(1)
+        if not unk:
+            for i in range(num_selected_token):
+                input_sequence_tokens.append(1)
         final_sequence = input_sequence_tokens + input_sequence[input_length:]
         output_sequence.append(final_sequence)
         return output_sequence
