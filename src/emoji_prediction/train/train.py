@@ -8,6 +8,7 @@ train.py is written for train model
 """
 
 import logging
+import random
 import itertools
 import torch
 import numpy as np
@@ -26,7 +27,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/28/2020"
+__date__ = "12/2/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -71,6 +72,12 @@ def batch_augmentation(text, text_lengths, label, augmentation_class, augmentati
         for sen in augment_sen:
             augmentation_text.append(sen)
             augmentation_label.append(lbl)
+
+    # shuffle list
+    z = list(zip(augmentation_text, augmentation_label))
+    random.shuffle(z)
+    augmentation_text, augmentation_label = zip(*z)
+
     tensor_augmentation_text = torch.FloatTensor(augmentation_text).long()
     tensor_augmentation_label = torch.FloatTensor(augmentation_label).long()
 
