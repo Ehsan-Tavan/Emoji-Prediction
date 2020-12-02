@@ -19,7 +19,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/29/2020"
+__date__ = "12/2/2020"
 
 
 class Augmentation:
@@ -35,11 +35,12 @@ class Augmentation:
         self.word_dict = self.find_similar_word_skipgram(vocabs)
 
     @staticmethod
-    def delete_randomly(input_sequence, input_length):
+    def delete_randomly(input_sequence, input_length, unk=False):
         """
         delete_randomly method is written for deleting tokens randomly
         :param input_sequence: sequence(=sentence) of word index
         :param input_length: input sequence(=sentence) length
+        :param unk: if unk is true replace token with unknown token index
         :return:
             output_sequence: list of sequence(=sentence) of word index
         """
@@ -50,8 +51,12 @@ class Augmentation:
         # num_selected_token is number of token that we want to delete
         num_selected_token = int(sen_len * 0.2)
 
-        for del_time in range(num_selected_token):
-            input_sequence_tokens.pop(random.randrange(len(input_sequence_tokens)))
+        if unk:
+            for del_time in range(num_selected_token):
+                input_sequence_tokens[random.randrange(len(input_sequence_tokens))] = 0
+        else:
+            for del_time in range(num_selected_token):
+                input_sequence_tokens.pop(random.randrange(len(input_sequence_tokens)))
 
         for i in range(num_selected_token):
             input_sequence_tokens.append(1)
