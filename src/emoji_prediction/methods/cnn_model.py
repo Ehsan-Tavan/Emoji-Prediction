@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/14/2020"
+__date__ = "12/4/2020"
 
 
 class CNN(nn.Module):
@@ -31,16 +31,25 @@ class CNN(nn.Module):
     def __init__(self, **kwargs):
         super().__init__()
 
+        self.use_emotion = kwargs["use_emotion"]
         self.embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
                                        embedding_dim=kwargs["embedding_dim"],
                                        padding_idx=kwargs["pad_idx"])
         self.embeddings.weight.requires_grad = True
 
+        if self.use_emotion:
+            self.emotion_embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
+                                                   embedding_dim=kwargs["emotion_embedding_dim"],
+                                                   padding_idx=kwargs["pad_idx"])
+            self.embeddings.weight.requires_grad = False
+
         self.convs = nn.ModuleList([
             nn.Sequential(
                 nn.Conv2d(in_channels=1,
                           out_channels=kwargs["n_filters"],
-                          kernel_size=(fs, kwargs["embedding_dim"])),
+                          kernel_size=(fs, kwargs["embedding_dim"] +
+                                       kwargs["emotion_embedding_dim"] if self.use_emotion
+                                       else kwargs["embedding_dim"])),
                 # nn.BatchNorm2d(kwargs["n_filters"]),
                 nn.ReLU(),
                 nn.Dropout(kwargs["middle_dropout"])
@@ -68,6 +77,9 @@ class CNN(nn.Module):
 
         embedded = self.start_dropout(self.embeddings(input_batch))
         # embedded.size() = (batch_size, sent_len, emb_dim)
+        if self.use_emotion:
+            emotion_embedded = self.start_dropout(self.emotion_embeddings(input_batch))
+            embedded = torch.cat((embedded, emotion_embedded), dim=2)
 
         embedded = embedded.unsqueeze(1)
         # embedded.size() = (batch size, 1, sent len, emb dim)
