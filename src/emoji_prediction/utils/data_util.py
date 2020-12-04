@@ -17,7 +17,7 @@ from torchtext import data
 from torchtext.vocab import Vectors
 from sklearn.utils import class_weight
 from emoji_prediction.config.cnn_config import BATCH_SIZE, TEXT_FIELD_PATH,\
-    LABEL_FIELD_PATH, DEVICE, EMOTION_EMBEDDING_DIM
+    LABEL_FIELD_PATH, DEVICE, EMOTION_EMBEDDING_DIM, USE_EMOTION
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -151,9 +151,12 @@ class DataSet:
                                                     ))
 
         # create emotion matrix
-        self.emotion_matrix = self.create_emotion_embedding(self.files_address["word_emotion_path"],
-                                                            dictionary_fields["text_field"],
-                                                            EMOTION_EMBEDDING_DIM)
+        if USE_EMOTION:
+            self.emotion_matrix = self.create_emotion_embedding(self.files_address["word_emotion_path"],
+                                                                dictionary_fields["text_field"],
+                                                                EMOTION_EMBEDDING_DIM)
+            logging.info("Create emotion_matrix")
+
         self.text_field = dictionary_fields["text_field"]
         logging.info("Start creating label_field vocabs.")
         dictionary_fields["label_field"].build_vocab(train_data)
