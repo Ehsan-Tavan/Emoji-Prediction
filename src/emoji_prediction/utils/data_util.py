@@ -12,11 +12,12 @@ import hazm
 import torch
 import numpy as np
 import pandas as pd
+import pickle as pkl
 from torchtext import data
 from torchtext.vocab import Vectors
 from sklearn.utils import class_weight
 from emoji_prediction.config.cnn_config import BATCH_SIZE, TEXT_FIELD_PATH,\
-    LABEL_FIELD_PATH, DEVICE
+    LABEL_FIELD_PATH, DEVICE, EMOTION_EMBEDDING_DIM
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -26,7 +27,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/09/2020"
+__date__ = "12/4/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -42,11 +43,14 @@ class DataSet:
             "train_data_path": kwargs["train_data_path"],
             "validation_data_path": kwargs["validation_data_path"],
             "test_data_path": kwargs["test_data_path"],
-            "embedding_path": kwargs["embedding_path"]
+            "embedding_path": kwargs["embedding_path"],
+            "word_emotion_path": kwargs["word_emotion_path"]
         }
 
         self.class_weight = None
         self.text_field = None
+        self.emotion_matrix = None
+
         self.iterator_dict = dict()
         self.embedding_dict = dict()
         self.unk_idx_dict = dict()
@@ -86,6 +90,31 @@ class DataSet:
         data_fields = [("text", text_field), ("label", label_field)]
         return dictionary_fields, data_fields
 
+    @staticmethod
+    def create_emotion_embedding(word_emotion_path, text_field, embedding_dim):
+        """
+        create_emotion_embedding method is written for create emotional embedding matrix
+        :param word_emotion_path: address of emotional dictionary
+        :param text_field: text_field
+        :param embedding_dim: dimension of emotional embedding
+        :return:
+            weight_matrix: emotional embedding
+        """
+        lematizer = hazm.Lemmatizer()
+        # load pickle dictionary of emotional embedding
+        with open(word_emotion_path, "rb") as file:
+            word_emotion_dict = pkl.load(file)
+
+        # create weight_matrix as zero matrix
+        weight_matrix = np.zeros((len(text_field.vocab), embedding_dim))
+
+        for token, idx in text_field.vocab.stoi.items():
+            lemma_token = lematizer.lemmatize(token)
+            emotion_embedding = word_emotion_dict.get(lemma_token)
+            if emotion_embedding is not None:
+                weight_matrix[idx] = emotion_embedding
+        return weight_matrix
+
     def load_data(self):
         """
         load_data method is written for creating iterator for train and test data
@@ -107,8 +136,6 @@ class DataSet:
 
         validation_data = data.Dataset(validation_examples, data_fields)
 
-        # train_data, valid_data = train_data.split(split_ratio=0.85, random_state=random.seed(1234))
-
         logging.info("Start creating test example.")
         test_examples = [data.Example.fromlist(row, data_fields) for row in
                          self.read_csv_file(self.files_address["test_data_path"]).values.tolist()]
@@ -123,6 +150,10 @@ class DataSet:
                                                         self.files_address["embedding_path"]
                                                     ))
 
+        # create emotion matrix
+        self.emotion_matrix = self.create_emotion_embedding(self.files_address["word_emotion_path"],
+                                                            dictionary_fields["text_field"],
+                                                            EMOTION_EMBEDDING_DIM)
         self.text_field = dictionary_fields["text_field"]
         logging.info("Start creating label_field vocabs.")
         dictionary_fields["label_field"].build_vocab(train_data)
