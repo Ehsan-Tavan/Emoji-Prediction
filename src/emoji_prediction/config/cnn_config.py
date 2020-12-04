@@ -17,7 +17,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/28/2020"
+__date__ = "12/4/2020"
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
 RAW_DATA_PATH = "../data/Raw/first_categori_tweets.csv"
@@ -35,6 +35,7 @@ VALIDATION_NORMAL_DATA_PATH = "../data/Processed/" \
 GLOVE_NEWS_300D = "../data/Embeddings/news_glove_300d_e10.txt"
 SKIPGRAM_NEWS_300D = "../data/Embeddings/skipgram_news_300d_30e.txt"
 CBOW_NEWS_300D = "../data/Embeddings/cbow_news_300d_30e.txt"
+EMOTION_EMBEDDING_PATH = "../data/Embeddings/word_emotion_dict.pkl"
 
 LOSS_CURVE_PATH = "../models/tmp/Curves/loss_curve.png"
 ACC_CURVE_PATH = "../models/tmp/Curves/accuracy_curve.png"
@@ -48,6 +49,7 @@ MODEL_PATH = "../models/tmp/"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 N_EPOCHS = 30
+EMOTION_EMBEDDING_DIM = 10
 BATCH_SIZE = 256
 EMBEDDING_DIM = 300
 FILTER_SIZE = [3, 4, 5]
