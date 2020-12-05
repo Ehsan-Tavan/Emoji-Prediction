@@ -6,7 +6,7 @@
 # pylint: disable-msg=import-error
 
 """
-lstm_cnn_model.py is written for LstmCnn model
+lstm_cnn_model.py is a module for LstmCnn model
 """
 
 import torch
@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/1/2020"
+__date__ = "12/5/2020"
 
 
 class LstmCnn(nn.Module):
@@ -30,12 +30,22 @@ class LstmCnn(nn.Module):
     """
     def __init__(self, **kwargs):
         super().__init__()
+        self.use_emotion = kwargs["use_emotion"]
+
         self.embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
                                        embedding_dim=kwargs["embedding_dim"],
                                        padding_idx=kwargs["pad_idx"])
         self.embeddings.weight.requires_grad = True
 
-        self.lstm_1 = nn.LSTM(input_size=kwargs["embedding_dim"],
+        if self.use_emotion:
+            self.emotion_embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
+                                                   embedding_dim=kwargs["emotion_embedding_dim"],
+                                                   padding_idx=kwargs["pad_idx"])
+            self.embeddings.weight.requires_grad = False
+
+        self.lstm_1 = nn.LSTM(input_size=kwargs["embedding_dim"] + kwargs["emotion_embedding_dim"]
+                              if self.use_emotion
+                              else kwargs["embedding_dim"],
                               hidden_size=kwargs["lstm_hidden_dim"],
                               num_layers=1,
                               bidirectional=kwargs["bidirectional"])
@@ -67,6 +77,11 @@ class LstmCnn(nn.Module):
         # input_batch.size() = [batch_size, sent_len]
         embedded = self.dropout["start_dropout"](self.embeddings(input_batch))
         # embedded.size() = [batch_size, sent_len, embedding_dim]
+
+        if self.use_emotion:
+            emotion_embedded = self.start_dropout(self.emotion_embeddings(input_batch))
+            embedded = torch.cat((embedded, emotion_embedded), dim=2)
+            # embedded.size() = [batch_size, sent_len, embedding_dim+emotion_embedding_dim]
 
         embedded = embedded.permute(1, 0, 2)
         # embedded.size() = [sent_len, batch_size, embedding_dim]
