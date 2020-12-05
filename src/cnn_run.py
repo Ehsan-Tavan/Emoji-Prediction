@@ -36,7 +36,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/4/2020"
+__date__ = "12/5/2020"
 
 
 logging.basicConfig(
@@ -98,8 +98,9 @@ class RunModel:
             torch.zeros(EMBEDDING_DIM)
         model.embeddings.weight.requires_grad = True
 
-        model.emotion_embeddings.weight.data.copy_ = data_set.emotion_matrix
-        model.emotion_embeddings.weight.requires_grad = False
+        if USE_EMOTION:
+            model.emotion_embeddings.weight.data.copy_ = data_set.emotion_matrix
+            model.emotion_embeddings.weight.requires_grad = False
 
         logging.info(f"The model has {count_parameters(model):,} trainable parameters")
 
