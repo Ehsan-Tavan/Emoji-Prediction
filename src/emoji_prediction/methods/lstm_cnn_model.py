@@ -79,7 +79,7 @@ class LstmCnn(nn.Module):
         # embedded.size() = [batch_size, sent_len, embedding_dim]
 
         if self.use_emotion:
-            emotion_embedded = self.start_dropout(self.emotion_embeddings(input_batch))
+            emotion_embedded = self.dropout["start_dropout"](self.emotion_embeddings(input_batch))
             embedded = torch.cat((embedded, emotion_embedded), dim=2)
             # embedded.size() = [batch_size, sent_len, embedding_dim+emotion_embedding_dim]
 
