@@ -6,7 +6,7 @@
 # pylint: disable-msg=import-error
 
 """
-deepmoji_model.py is written for deepmoji model
+deepmoji_model.py is a module for deepmoji model
 """
 
 import torch
@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/25/2020"
+__date__ = "12/6/2020"
 
 
 class DeeoMoji(nn.Module):
@@ -30,12 +30,22 @@ class DeeoMoji(nn.Module):
     """
     def __init__(self, **kwargs):
         super().__init__()
+        self.use_emotion = kwargs["use_emotion"]
+
         self.embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
                                        embedding_dim=kwargs["embedding_dim"],
                                        padding_idx=kwargs["pad_idx"])
         self.embeddings.weight.requires_grad = True
 
-        self.lstm_1 = nn.LSTM(input_size=kwargs["embedding_dim"],
+        if self.use_emotion:
+            self.emotion_embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
+                                                   embedding_dim=kwargs["emotion_embedding_dim"],
+                                                   padding_idx=kwargs["pad_idx"])
+            self.embeddings.weight.requires_grad = False
+
+        self.lstm_1 = nn.LSTM(input_size=kwargs["embedding_dim"] +
+                              kwargs["emotion_embedding_dim"] if self.use_emotion
+                              else kwargs["embedding_dim"],
                               hidden_size=kwargs["lstm_hidden_dim"],
                               num_layers=1,
                               bidirectional=kwargs["bidirectional"])
@@ -85,7 +95,7 @@ class DeeoMoji(nn.Module):
 
         return attn_weight_matrix
 
-    def forward(self, input_batch, text_length, pack_padded=False):
+    def forward(self, input_batch, text_length, pack_padded=True):
         # input_batch.size() = [batch_size, sent_len]
 
         if pack_padded:
@@ -95,6 +105,11 @@ class DeeoMoji(nn.Module):
             _, recover_idx = perm_idx.sort(descending=False)
 
         embedded = self.embeddings(input_batch)
+
+        if self.use_emotion:
+            emotion_embedded = self.start_dropout(self.emotion_embeddings(input_batch))
+            embedded = torch.cat((embedded, emotion_embedded), dim=2)
+
         embedded = torch.tanh(embedded)
         embedded = self.dropout["start_dropout"](embedded)
         # embedded.size() = [batch_size, sent_len, embedding_dim]
@@ -105,18 +120,23 @@ class DeeoMoji(nn.Module):
         # pack padded sequence
         if pack_padded:
             embedded = nn.utils.rnn.pack_padded_sequence(embedded,
-                                                         lengths=sorted_text_len.tolist(),
-                                                         batch_first=True)
+                                                         lengths=sorted_text_len.tolist())
 
-        output_1, (_, _) = self.lstm_1(embedded)
+        output_1, (hidden, cell) = self.lstm_1(embedded)
         # output_1.size() = [sent_len, batch_size, hid_dim * num_directions]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
 
-        output_2, (_, _) = self.lstm_2(output_1)
+        output_2, (_, _) = self.lstm_2(output_1, (hidden, cell))
         # output_2.size() = [sent_len, batch_size, hid_dim * num_directions]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
+
+        # unpack sequence
+        if pack_padded:
+            embedded, _ = nn.utils.rnn.pad_packed_sequence(embedded)
+            output_1, _ = nn.utils.rnn.pad_packed_sequence(output_1)
+            output_2, _ = nn.utils.rnn.pad_packed_sequence(output_2)
 
         all_features = torch.cat((output_2, output_1, embedded), dim=2).permute(1, 0, 2)
         # all_features.size() = [batch_size, sent_len,
@@ -128,20 +148,14 @@ class DeeoMoji(nn.Module):
         hidden_matrix = torch.bmm(attn_weight_matrix, all_features)
         # hidden_matrix.size() = [batch_size, 1, (2 * hid_dim * num_directions) + embedding_dim]
 
-        # unpack sequence
-        if pack_padded:
-            hidden_matrix, _ = nn.utils.rnn.pad_packed_sequence(hidden_matrix)
-
         hidden_matrix = self.dropout["final_dropout"](hidden_matrix.squeeze(1))
-        print(hidden_matrix.size())
 
         # hidden_matrix = self.dropout["final_dropout"](
         #     hidden_matrix.view(-1, hidden_matrix.size()[1] * hidden_matrix.size()[2])
         # )
         # hidden_matrix.size() = [batch_size, r * ((2 * hid_dim * num_directions) + embedding_dim)]
 
-        pred = self.output(hidden_matrix).permute(1, 0, 2)
-        print(pred.size())
+        pred = self.output(hidden_matrix)
         if pack_padded:
             pred = pred[recover_idx]
         return pred
