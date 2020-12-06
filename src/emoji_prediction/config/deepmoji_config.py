@@ -25,13 +25,13 @@ TRAIN_NORMAL_NO_MENTION_DATA_PATH = "../data/Processed/" \
                                     "train_first_categori_no_mention_tweets_normal.csv"
 TEST_NORMAL_NO_MENTION_DATA_PATH = "../data/Processed/" \
                                    "test_first_categori_no_mention_tweets_normal.csv"
-TRAIN_NORMAL_DATA_PATH = "../data/Processed/" \
-                                    "train_first_categori_tweets_normal.csv"
-TEST_NORMAL_DATA_PATH = "../data/Processed/" \
-                                   "test_first_categori_tweets_normal.csv"
 
+TRAIN_NORMAL_DATA_PATH = "../data/Processed/" \
+                                    "train_first_categori_tweets_normal_5.csv"
+TEST_NORMAL_DATA_PATH = "../data/Processed/" \
+                                   "train_first_categori_tweets_normal_5.csv"
 VALIDATION_NORMAL_DATA_PATH = "../data/Processed/" \
-                                   "valid_first_categori_tweets_normal.csv"
+                                   "train_first_categori_tweets_normal_5.csv"
 
 LOSS_CURVE_PATH = "../models/ID_7/Curves/loss_curve.png"
 ACC_CURVE_PATH = "../models/ID_7/Curves/accuracy_curve.png"
@@ -41,11 +41,11 @@ SKIPGRAM_NEWS_300D = "../data/Embeddings/skipgram_news_300d_30e.txt"
 CBOW_NEWS_300D = "../data/Embeddings/cbow_news_300d_30e.txt"
 EMOTION_EMBEDDING_PATH = "../data/Embeddings/word_emotion_dict.pkl"
 
-TEXT_FIELD_PATH = "../models/ID_7/Fields/text_field"
-LABEL_FIELD_PATH = "../models/ID_7/Fields/label_field"
-LOG_PATH = "../models/ID_7/Logs/log.txt"
-TEST_AUG_LOG_PATH = "../models/ID_7/Logs/test_aug_log.txt"
-MODEL_PATH = "../models/ID_7/"
+TEXT_FIELD_PATH = "../models/tmp/Fields/text_field"
+LABEL_FIELD_PATH = "../models/tmp/Fields/label_field"
+LOG_PATH = "../models/tmp/Logs/log.txt"
+TEST_AUG_LOG_PATH = "../models/tmp/Logs/test_aug_log.txt"
+MODEL_PATH = "../models/tmp/"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
