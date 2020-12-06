@@ -25,7 +25,7 @@ from emoji_prediction.config.deepmoji_config import LOG_PATH, TRAIN_NORMAL_DATA_
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D, EMBEDDING_DIM,\
     DEVICE, N_EPOCHS, MODEL_PATH, START_DROPOUT, FINAL_DROPOUT, LSTM_HIDDEN_DIM, BIDIRECTIONAL,\
     LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH, LR_DECAY, ADDING_NOISE, TRAIN_AUGMENTATION,\
-    TEST_AUGMENTATION
+    TEST_AUGMENTATION, EMOTION_EMBEDDING_DIM, EMOTION_EMBEDDING_PATH, USE_EMOTION
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -35,7 +35,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/28/2020"
+__date__ = "12/6/2020"
 
 
 logging.basicConfig(
@@ -61,7 +61,8 @@ class RunModel:
         data_set = DataSet(train_data_path=TRAIN_NORMAL_DATA_PATH,
                            test_data_path=TEST_NORMAL_DATA_PATH,
                            validation_data_path=VALIDATION_NORMAL_DATA_PATH,
-                           embedding_path=SKIPGRAM_NEWS_300D)
+                           embedding_path=SKIPGRAM_NEWS_300D,
+                           word_emotion_path=EMOTION_EMBEDDING_PATH)
         data_set.load_data()
         return data_set
 
@@ -82,7 +83,8 @@ class RunModel:
                          output_size=data_set.num_vocab_dict["num_label"],
                          embedding_dim=EMBEDDING_DIM, start_dropout=START_DROPOUT,
                          final_dropout=FINAL_DROPOUT, lstm_hidden_dim=LSTM_HIDDEN_DIM,
-                         bidirectional=BIDIRECTIONAL)
+                         bidirectional=BIDIRECTIONAL, use_emotion=USE_EMOTION,
+                         emotion_embedding_dim=EMOTION_EMBEDDING_DIM)
 
         # initializing model parameters
         model.apply(init_weights)
@@ -93,6 +95,10 @@ class RunModel:
         model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] =\
             torch.zeros(EMBEDDING_DIM)
         model.embeddings.weight.requires_grad = True
+
+        if USE_EMOTION:
+            model.emotion_embeddings.weight.data.copy_ = data_set.emotion_matrix
+            model.emotion_embeddings.weight.requires_grad = False
 
         logging.info(f"The model has {count_parameters(model):,} trainable parameters")
 
@@ -121,9 +127,6 @@ class RunModel:
         plt.xlabel("number of epochs")
         plt.ylabel("loss value")
         plt.savefig(LOSS_CURVE_PATH)
-
-        # clear figure command
-        plt.clf()
 
         # plot accuracy curves
         plt.figure()
