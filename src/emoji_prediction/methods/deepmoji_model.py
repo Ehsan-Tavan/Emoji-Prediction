@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/6/2020"
+__date__ = "12/7/2020"
 
 
 class DeeoMoji(nn.Module):
@@ -58,12 +58,18 @@ class DeeoMoji(nn.Module):
         # We will use da = 350, r = 30 & penalization_coeff = 1 as
         # per given in the self-attention original ICLR paper
         self.w_s1 = nn.Linear(in_features=(2 * 2 * kwargs["lstm_hidden_dim"]) +
+                              kwargs["embedding_dim"] + kwargs["emotion_embedding_dim"]
+                              if self.use_emotion else
+                              (2 * 2 * kwargs["lstm_hidden_dim"]) +
                               kwargs["embedding_dim"],
                               out_features=350)
         self.w_s2 = nn.Linear(in_features=350, out_features=1)
 
-        self.output = nn.Linear(in_features=((2 * 2 * kwargs["lstm_hidden_dim"]) +
-                                             kwargs["embedding_dim"]),
+        self.output = nn.Linear(in_features=(2 * 2 * kwargs["lstm_hidden_dim"]) +
+                                kwargs["embedding_dim"] + kwargs["emotion_embedding_dim"]
+                                if self.use_emotion else
+                                (2 * 2 * kwargs["lstm_hidden_dim"]) +
+                                kwargs["embedding_dim"],
                                 out_features=kwargs["output_size"])
 
         self.dropout = {"start_dropout": nn.Dropout(kwargs["start_dropout"]),
@@ -107,7 +113,7 @@ class DeeoMoji(nn.Module):
         embedded = self.embeddings(input_batch)
 
         if self.use_emotion:
-            emotion_embedded = self.start_dropout(self.emotion_embeddings(input_batch))
+            emotion_embedded = self.emotion_embeddings(input_batch)
             embedded = torch.cat((embedded, emotion_embedded), dim=2)
 
         embedded = torch.tanh(embedded)
