@@ -27,7 +27,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/2/2020"
+__date__ = "12/7/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -270,7 +270,9 @@ def evaluate_aug_text(model, iterator, include_length=False, augmentation_class=
             for sample, length, lbl in zip(text.tolist(), text_lengths.tolist(), label.tolist()):
                 augment_sample = test_augmentation(sample, length, augmentation_class).to(DEVICE)
                 if include_length:
-                    aug_pred = model(augment_sample, length).tolist()
+                    augment_length = [length] * len(augment_sample.tolist())
+                    augment_length = torch.FloatTensor(augment_length).long()
+                    aug_pred = model(augment_sample, augment_length).tolist()
                 else:
                     aug_pred = model(augment_sample).tolist()
                 res = [np.argmax(i) for i in aug_pred]
