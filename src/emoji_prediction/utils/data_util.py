@@ -27,7 +27,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/4/2020"
+__date__ = "12/25/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -307,4 +307,4 @@ def initialize_weights_xavier_uniform(model):
     :param model: input model
     """
     if hasattr(model, "weight") and model.weight.dim() > 1:
-        torch.nn.init.xavier_uniform_(m.weight.data)
+        torch.nn.init.xavier_uniform_(model.weight.data)
