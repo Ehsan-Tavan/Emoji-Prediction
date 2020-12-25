@@ -95,13 +95,6 @@ class RunModel:
         model.apply(initialize_weights_xavier_uniform)
         logging.info("create model.")
 
-        # copy word embedding vectors to embedding layer
-        # model.embeddings.weight.data.copy_(data_set.embedding_dict["vocab_embedding_vectors"])
-        # model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] =\
-        #     torch.zeros(EMBEDDING_DIM)
-        model.tok_embedding.weight.requires_grad = True
-        model.pos_embedding.weight.requires_grad = True
-
         logging.info(f"The model has {count_parameters(model):,} trainable parameters")
 
         # define optimizer
