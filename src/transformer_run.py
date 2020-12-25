@@ -25,7 +25,7 @@ from emoji_prediction.config.transformer_config import LOG_PATH, TRAIN_NORMAL_DA
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D, HID_DIM, ENC_LAYERS,\
     ENC_HEADS, ENC_PF_DIM, ENC_DROPOUT, DEVICE, N_EPOCHS, MODEL_PATH, FINAL_DROPOUT,\
     LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH, ADDING_NOISE, LR_DECAY,\
-    TRAIN_AUGMENTATION, TEST_AUGMENTATION
+    TRAIN_AUGMENTATION, TEST_AUGMENTATION, EMOTION_EMBEDDING_PATH
 
 
 __author__ = "Ehsan Tavan"
@@ -36,7 +36,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/28/2020"
+__date__ = "12/25/2020"
 
 
 logging.basicConfig(
@@ -62,7 +62,8 @@ class RunModel:
         data_set = DataSet(train_data_path=TRAIN_NORMAL_DATA_PATH,
                            test_data_path=TEST_NORMAL_DATA_PATH,
                            validation_data_path=VALIDATION_NORMAL_DATA_PATH,
-                           embedding_path=SKIPGRAM_NEWS_300D)
+                           embedding_path=SKIPGRAM_NEWS_300D,
+                           word_emotion_path=EMOTION_EMBEDDING_PATH)
         data_set.load_data()
         return data_set
 
