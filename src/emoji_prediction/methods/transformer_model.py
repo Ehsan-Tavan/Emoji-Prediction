@@ -20,7 +20,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/28/2020"
+__date__ = "12/25/2020"
 
 
 class Transformer(nn.Module):
@@ -73,7 +73,7 @@ class Transformer(nn.Module):
         return self.fully_connected_layers(enc_input)
 
 
-class Encoder:
+class Encoder(nn.Module):
     """
     In this class we implement encoder of transformer
     """
@@ -101,12 +101,13 @@ class Encoder:
                                      for _ in range(n_layers)])
 
         self.dropout = nn.Dropout(dropout)
+        self.device = device
 
         self.scale = torch.sqrt(torch.FloatTensor([hid_dim])).to(device)
 
     def forward(self, input_batch, input_mask):
         # input_batch.size() = [batch_size, input_len]
-        # input_mask.size() = [batch_size, input_len]
+        # input_mask.size() = [batch_size, 1, 1, input_len]
 
         batch_size = input_batch.shape[0]
         input_len = input_batch.shape[1]
@@ -256,3 +257,22 @@ class PositionwiseFeedforwardLayer(nn.Module):
         # x.size() = [batch_size, seq_len, hid_dim]
 
         return x
+
+
+# create model
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+enc = Encoder(vocab_size=100,
+              hid_dim=256,
+              n_layers=3,
+              n_heads=8,
+              pf_dim=512,
+              dropout=0.1,
+              device=DEVICE)
+
+model = Transformer(hid_dim=256, final_dropout=0.2, encoder=enc,
+                    output_size=15, device=DEVICE,
+                    src_pad_idx=1)
+
+text = torch.rand((20, 16))
+
+model.forward(input_batch=text.long())
