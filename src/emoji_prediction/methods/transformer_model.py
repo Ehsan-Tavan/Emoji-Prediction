@@ -88,8 +88,10 @@ class Encoder:
         super().__init__()
         self.tok_embedding = nn.Embedding(num_embeddings=vocab_size,
                                           embedding_dim=hid_dim)
+        self.tok_embedding.weight.requires_grad = True
         self.pos_embedding = nn.Embedding(num_embeddings=max_length,
                                           embedding_dim=hid_dim)
+        self.pos_embedding.weight.requires_grad = True
 
         self.layers = nn.ModuleList([EncoderLayer(hid_dim,
                                                   n_heads,
