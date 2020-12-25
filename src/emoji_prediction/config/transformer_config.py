@@ -16,7 +16,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/28/2020"
+__date__ = "12/25/2020"
 
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
@@ -35,6 +35,7 @@ VALIDATION_NORMAL_DATA_PATH = "../data/Processed/" \
 GLOVE_NEWS_300D = "../data/Embeddings/news_glove_300d_e10.txt"
 SKIPGRAM_NEWS_300D = "../data/Embeddings/skipgram_news_300d_30e.txt"
 CBOW_NEWS_300D = "../data/Embeddings/cbow_news_300d_30e.txt"
+EMOTION_EMBEDDING_PATH = "../data/Embeddings/word_emotion_dict.pkl"
 
 LOSS_CURVE_PATH = "../models/tmp/Curves/loss_curve.png"
 ACC_CURVE_PATH = "../models/tmp/Curves/accuracy_curve.png"
