@@ -41,14 +41,14 @@ class Transformer(nn.Module):
         self.device = device
 
         self.fully_connected_layers = nn.Sequential(
-            nn.Linear(in_features=hid_dim,
-                      out_features=256),
+            nn.Linear(in_features=100*hid_dim,
+                      out_features=512),
             nn.ReLU(),
             nn.Dropout(final_dropout),
-            nn.Linear(in_features=256, out_features=128),
+            nn.Linear(in_features=512, out_features=2048),
             nn.ReLU(),
             nn.Dropout(final_dropout),
-            nn.Linear(in_features=128, out_features=output_size)
+            nn.Linear(in_features=2048, out_features=output_size)
         )
 
     def make_input_mask(self, input_batch):
@@ -257,22 +257,3 @@ class PositionwiseFeedforwardLayer(nn.Module):
         # x.size() = [batch_size, seq_len, hid_dim]
 
         return x
-
-
-# create model
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-enc = Encoder(vocab_size=100,
-              hid_dim=256,
-              n_layers=3,
-              n_heads=8,
-              pf_dim=512,
-              dropout=0.1,
-              device=DEVICE)
-
-model = Transformer(hid_dim=256, final_dropout=0.2, encoder=enc,
-                    output_size=15, device=DEVICE,
-                    src_pad_idx=1)
-
-text = torch.rand((20, 16))
-
-model.forward(input_batch=text.long())
