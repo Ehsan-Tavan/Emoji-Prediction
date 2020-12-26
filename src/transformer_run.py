@@ -270,6 +270,8 @@ class RunModel:
 
         # test augmentation
         if test_augmentation:
+            if not augmentation:
+                augmentation_class, _ = self.create_augmentation(data_set)
             self.eval_test_augmentation(best_val_loss_model=best_val_loss_model,
                                         best_test_f_score_model=best_test_f_score_model,
                                         data_set=data_set, aug_class=augmentation_class)
