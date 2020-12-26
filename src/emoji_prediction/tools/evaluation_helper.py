@@ -6,6 +6,7 @@
 evaluation_helper.py is a evaluation file for writing evaluation methods
 """
 
+import numpy as np
 import torch
 from emoji_prediction.config.cnn_config import DEVICE
 
@@ -17,7 +18,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/19/2020"
+__date__ = "12/26/2020"
 
 
 def binary_accuracy(preds, target):
@@ -38,3 +39,15 @@ def categorical_accuracy(preds, target):
     max_preds = preds.argmax(dim=1, keepdim=True)   # get the index of the max probability
     correct = max_preds.squeeze(1).eq(target)
     return correct.sum().to(DEVICE) / torch.FloatTensor([target.shape[0]]).to(DEVICE)
+
+
+def top_n_accuracy(preds, target, n=5):
+    score = 0
+    for i, pred in enumerate(preds):
+        arr = np.array(pred)
+        arr = arr.argsort()[-n:][::-1]
+        if target[i] in arr:
+            score += 1
+    return score / len(preds)
+
+
