@@ -15,7 +15,7 @@ import numpy as np
 from collections import Counter
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_recall_fscore_support, f1_score
-from emoji_prediction.tools.evaluation_helper import categorical_accuracy
+from emoji_prediction.tools.evaluation_helper import categorical_accuracy, top_n_accuracy
 from emoji_prediction.config.cnn_config import DEVICE
 
 
@@ -27,7 +27,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/7/2020"
+__date__ = "12/26/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -180,8 +180,9 @@ def evaluate(model, iterator, criterion, include_length=False):
         total_fscore: F1-score of all  data
     """
     # define evaluate_parameters_dict to save output result
-    evaluate_parameters_dict = {"loss": 0, "acc": 0, "precision": 0,
-                                "recall": 0, "f-score": 0, "total_fscore": 0}
+    evaluate_parameters_dict = {"loss": 0, "acc": 0, "top_3_acc": 0,
+                                "top_5_acc": 0, "precision": 0, "recall": 0,
+                                "f-score": 0, "total_fscore": 0}
     total_predict = []
     total_label = []
     # put model in evaluate model
@@ -205,10 +206,14 @@ def evaluate(model, iterator, criterion, include_length=False):
 
             # calculate accuracy
             acc = categorical_accuracy(predictions, batch.label)
+            top_3_acc = top_n_accuracy(predictions.cpu().numpy(), batch.label.cpu().numpy(), n=3)
+            top_5_acc = top_n_accuracy(predictions.cpu().numpy(), batch.label.cpu().numpy(), n=5)
 
             # # save model result
             evaluate_parameters_dict["loss"] += loss.item()
             evaluate_parameters_dict["acc"] += acc.item()
+            evaluate_parameters_dict["top_3_acc"] += top_3_acc
+            evaluate_parameters_dict["top_5_acc"] += top_5_acc
 
     total_predict = list(itertools.chain.from_iterable(total_predict))
     total_predict = list(np.argmax(total_predict, axis=1))
@@ -230,6 +235,12 @@ def evaluate(model, iterator, criterion, include_length=False):
 
     evaluate_parameters_dict["acc"] = \
         evaluate_parameters_dict["acc"] / len(iterator)
+
+    evaluate_parameters_dict["top_3_acc"] = \
+        evaluate_parameters_dict["top_3_acc"] / len(iterator)
+
+    evaluate_parameters_dict["top_5_acc"] = \
+        evaluate_parameters_dict["top_5_acc"] / len(iterator)
 
     return evaluate_parameters_dict
 
