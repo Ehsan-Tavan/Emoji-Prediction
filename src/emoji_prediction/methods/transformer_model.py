@@ -20,7 +20,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/25/2020"
+__date__ = "12/26/2020"
 
 
 class Transformer(nn.Module):
@@ -40,15 +40,8 @@ class Transformer(nn.Module):
         self.src_pad_idx = src_pad_idx
         self.device = device
 
-        self.fully_connected_layers = nn.Sequential(
-            nn.Linear(in_features=100*hid_dim,
-                      out_features=512),
-            nn.ReLU(),
-            nn.Dropout(final_dropout),
-            nn.Linear(in_features=512, out_features=2048),
-            nn.ReLU(),
-            nn.Dropout(final_dropout),
-            nn.Linear(in_features=2048, out_features=output_size)
+        self.fully_connected_layers = nn.Linear(
+            in_features=hid_dim, out_features=output_size
         )
 
     def make_input_mask(self, input_batch):
@@ -64,13 +57,19 @@ class Transformer(nn.Module):
         input_mask = self.make_input_mask(input_batch)
         # input_mask.size() = [batch_size, 1, 1, input_len]
 
-        enc_input = self.encoder(input_batch, input_mask)
-        # enc_input.size() = [batch_size, input_len, hid_dim]
+        enc_output = self.encoder(input_batch, input_mask)
+        # enc_output.size() = [batch_size, input_len, hid_dim]
 
-        enc_input = torch.flatten(enc_input, start_dim=1)
-        # enc_input.size() = [batch_size, input_len * hid_dim]
+        enc_output = enc_output.permute(0, 2, 1)
+        # enc_output.size() = [batch_size, hid_dim, input_len]
 
-        return self.fully_connected_layers(enc_input)
+        enc_output = nn.MaxPool1d(enc_output.size()[2])(enc_output).squeeze(2)
+        # enc_input.size() = [batch_size, hid_dim]
+
+        # enc_output = torch.flatten(enc_output, start_dim=1)
+        # # enc_input.size() = [batch_size, input_len * hid_dim]
+
+        return self.fully_connected_layers(enc_output)
 
 
 class Encoder(nn.Module):
@@ -257,3 +256,30 @@ class PositionwiseFeedforwardLayer(nn.Module):
         # x.size() = [batch_size, seq_len, hid_dim]
 
         return x
+
+
+# # create model
+#
+# HID_DIM = 256
+# ENC_LAYERS = 3
+# ENC_HEADS = 8
+# ENC_PF_DIM = 512
+# ENC_DROPOUT = 0.1
+# FINAL_DROPOUT = 0.3
+# MAX_LENGTH = 100
+# DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# enc = Encoder(vocab_size=100,
+#               hid_dim=HID_DIM,
+#               n_layers=ENC_LAYERS,
+#               n_heads=ENC_HEADS,
+#               pf_dim=ENC_PF_DIM,
+#               dropout=ENC_DROPOUT,
+#               device=DEVICE)
+#
+# model = Transformer(hid_dim=HID_DIM, final_dropout=FINAL_DROPOUT, encoder=enc,
+#                     output_size=15, device=DEVICE,
+#                     src_pad_idx=1)
+#
+# text = torch.rand((20, 100))
+#
+# model.forward(input_batch=text.long())
