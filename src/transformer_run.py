@@ -36,7 +36,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/25/2020"
+__date__ = "12/26/2020"
 
 
 logging.basicConfig(
@@ -86,6 +86,9 @@ class RunModel:
                       pf_dim=ENC_PF_DIM,
                       dropout=ENC_DROPOUT,
                       device=DEVICE)
+
+        enc.tok_embedding.weight.requires_grad = True
+        enc.pos_embedding.weight.requires_grad = True
 
         model = Transformer(hid_dim=HID_DIM, final_dropout=FINAL_DROPOUT, encoder=enc,
                             output_size=data_set.num_vocab_dict["num_label"], device=DEVICE,
