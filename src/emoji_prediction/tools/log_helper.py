@@ -15,7 +15,7 @@ __version__ = "1.2.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "10/30/2020"
+__date__ = "12/26/2020"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -55,11 +55,19 @@ def model_result_log(train_log_dict, valid_log_dict, test_log_dict):
     :param test_log_dict: dictionary of test data result
     """
     logging.info(f"\tTrain. Loss: {train_log_dict['loss']:.4f} | "
-                 f"Train. Acc: {train_log_dict['acc'] * 100:.2f}%")
+                 f"Train. Acc: {train_log_dict['acc'] * 100:.2f}% | "
+                 f"Train. top 3 Acc: {train_log_dict['top_3_acc'] * 100:.2f}% | "
+                 f"Train. top 5 Acc: {train_log_dict['top_5_acc'] * 100:.2f}%")
+
     logging.info(f"\t Val. Loss: {valid_log_dict['loss']:.4f} |  "
-                 f"Val. Acc: {valid_log_dict['acc'] * 100:.2f}%")
+                 f"Val. Acc: {valid_log_dict['acc'] * 100:.2f}% | "
+                 f"Val. top 3 Acc: {valid_log_dict['top_3_acc'] * 100:.2f}% | "
+                 f"Val. top 5 Acc: {valid_log_dict['top_5_acc'] * 100:.2f}%")
+
     logging.info(f"\t Test. Loss: {test_log_dict['loss']:.4f} |  "
-                 f"Test. Acc: {test_log_dict['acc'] * 100:.2f}%")
+                 f"Test. Acc: {test_log_dict['acc'] * 100:.2f}% | "
+                 f"Test. top 3 Acc: {test_log_dict['top_3_acc'] * 100:.2f}% | "
+                 f"Test. top 5 Acc: {test_log_dict['top_5_acc'] * 100:.2f}%")
 
     logging.info(f"\t Train. Precision: {train_log_dict['precision']}")
     logging.info(f"\t Train. Recall: {train_log_dict['recall']}")
@@ -103,11 +111,19 @@ def model_result_save(log_file, train_log_dict, valid_log_dict, test_log_dict):
     """
     # log_file.write(f"Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s\n")
     log_file.write(f"\tTrain. Loss: {train_log_dict['loss']:.4f} | "
-                   f"Train. Acc: {train_log_dict['acc'] * 100:.2f}%\n")
+                   f"Train. Acc: {train_log_dict['acc'] * 100:.2f}% | "
+                   f"Train. top 3 Acc: {train_log_dict['top_3_acc'] * 100:.2f}% | "
+                   f"Train. top 5 Acc: {train_log_dict['top_5_acc'] * 100:.2f}%\n")
+
     log_file.write(f"\t Val. Loss: {valid_log_dict['loss']:.4f} |  "
-                   f"Val. Acc: {valid_log_dict['acc'] * 100:.2f}%\n")
+                   f"Val. Acc: {valid_log_dict['acc'] * 100:.2f}% | "
+                   f"Val. top 3 Acc: {valid_log_dict['top_3_acc'] * 100:.2f}% | "
+                   f"Val. top 5 Acc: {valid_log_dict['top_5_acc'] * 100:.2f}%\n")
+
     log_file.write(f"\t Test. Loss: {test_log_dict['loss']:.4f} |  "
-                   f"Test. Acc: {test_log_dict['acc'] * 100:.2f}%\n")
+                   f"Test. Acc: {test_log_dict['acc'] * 100:.2f}%\n | "
+                   f"Test. top 3 Acc: {test_log_dict['top_3_acc'] * 100:.2f}% | "
+                   f"Test. top 5 Acc: {test_log_dict['top_5_acc'] * 100:.2f}%\n")
 
     log_file.write(f"\t Train. Precision: {train_log_dict['precision']}\n")
     log_file.write(f"\t Train. Recall: {train_log_dict['recall']}\n")
