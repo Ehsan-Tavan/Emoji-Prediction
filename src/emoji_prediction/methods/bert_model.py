@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "11/28/2020"
+__date__ = "01/02/2020"
 
 
 class BERTEmoji(nn.Module):
@@ -33,15 +33,9 @@ class BERTEmoji(nn.Module):
 
         self.bert, embedding_dim = self.bert_loader(kwargs["model_config"])
 
-        self.fully_connected_layers = nn.Sequential(
-            nn.Linear(in_features=kwargs["sen_len"]*768,
-                      out_features=512),
-            nn.ReLU(),
-            nn.Dropout(kwargs["final_dropout"]),
-            nn.Linear(in_features=512, out_features=256),
-            nn.ReLU(),
-            nn.Dropout(kwargs["final_dropout"]),
-            nn.Linear(in_features=256, out_features=kwargs["output_size"]))
+        self.fully_connected_layers = nn.Linear(
+            in_features=kwargs["sen_len"]*768, out_features=kwargs["output_size"]
+        )
 
         self.start_dropout = nn.Dropout(kwargs["start_dropout"])
 
