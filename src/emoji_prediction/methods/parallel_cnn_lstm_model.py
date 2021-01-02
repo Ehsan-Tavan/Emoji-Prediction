@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/02/2020"
+__date__ = "01/02/2021"
 
 
 class ParallelCnnLstm(nn.Module):
@@ -35,14 +35,23 @@ class ParallelCnnLstm(nn.Module):
                                        embedding_dim=kwargs["embedding_dim"],
                                        padding_idx=kwargs["pad_idx"])
 
+        if self.use_emotion:
+            self.emotion_embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
+                                                   embedding_dim=kwargs["emotion_embedding_dim"],
+                                                   padding_idx=kwargs["pad_idx"])
+
         self.convs = nn.ModuleList([
             nn.Conv2d(in_channels=1,
                       out_channels=kwargs["n_filters"],
-                      kernel_size=(fs, kwargs["embedding_dim"]))
+                      kernel_size=(fs, kwargs["embedding_dim"] +
+                                   kwargs["emotion_embedding_dim"] if self.use_emotion
+                                   else kwargs["embedding_dim"]))
             for fs in kwargs["filter_sizes"]
         ])
 
-        self.lstm = nn.LSTM(input_size=kwargs["embedding_dim"],
+        self.lstm = nn.LSTM(input_size=kwargs["embedding_dim"] +
+                            kwargs["emotion_embedding_dim"] if self.use_emotion
+                            else kwargs["embedding_dim"],
                             hidden_size=kwargs["lstm_units"],
                             num_layers=kwargs["lstm_layers"],
                             bidirectional=kwargs["bidirectional"],
@@ -72,8 +81,12 @@ class ParallelCnnLstm(nn.Module):
         embedded = self.start_dropout(self.embeddings(input_batch))
         # embedded.size() = [batch_size, sent_len, emb_dim]
 
+        if self.use_emotion:
+            emotion_embedded = self.start_dropout(self.emotion_embeddings(input_batch))
+            embedded = torch.cat((embedded, emotion_embedded), dim=2)
+
         embedded_cnn = embedded.unsqueeze(1)
-        # embedded_cnn.size() = [batch size, 1, sent len, emb dim]
+        # embedded_cnn.size() = [batch_size, 1, sent_len, emd_dim]
 
         embedded_lstm = embedded.permute(1, 0, 2)
         # embedded_lstm.size() = [sent_len, batch_size, emb_dim]
