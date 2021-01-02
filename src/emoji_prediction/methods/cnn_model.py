@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/4/2020"
+__date__ = "01/02/2021"
 
 
 class CNN(nn.Module):
@@ -41,7 +41,6 @@ class CNN(nn.Module):
             self.emotion_embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
                                                    embedding_dim=kwargs["emotion_embedding_dim"],
                                                    padding_idx=kwargs["pad_idx"])
-            self.embeddings.weight.requires_grad = False
 
         self.convs = nn.ModuleList([
             nn.Sequential(
