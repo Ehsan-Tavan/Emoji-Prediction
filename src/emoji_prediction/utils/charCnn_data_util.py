@@ -232,7 +232,7 @@ class DataSet:
             num_vocab_dict:  dictionary of vocab counts in each field
         """
         num_vocab_dict = dict()
-        num_vocab_dict["num_token"] = len(dictionary_fields["text_field"].vocab)
+        num_vocab_dict["num_char"] = len(dictionary_fields["text_field"].vocab)
         num_vocab_dict["num_label"] = len(dictionary_fields["label_field"].vocab)
         return num_vocab_dict
 
