@@ -78,7 +78,7 @@ class DataSet:
         """
         # Create Field for data
         text_field = data.Field(tokenize=self.tokenizer, batch_first=True,
-                                fix_length=MAX_LENGTH)
+                                fix_length=MAX_LENGTH, include_lengths=True)
         label_field = data.LabelField()
         dictionary_fields = {
             "text_field": text_field,
