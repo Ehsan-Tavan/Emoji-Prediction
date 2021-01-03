@@ -23,7 +23,7 @@ __status__ = "Production"
 __date__ = "01/03/2021"
 
 
-class CNN(nn.Module):
+class CharCnn(nn.Module):
     """
     In this class we implement charCnn model
     """
