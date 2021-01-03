@@ -33,35 +33,24 @@ TEST_NORMAL_DATA_PATH = "../data/Processed/" \
 VALIDATION_NORMAL_DATA_PATH = "../data/Processed/" \
                                    "train_first_categori_tweets_normal_5.csv"
 
-GLOVE_NEWS_300D = "../data/Embeddings/news_glove_300d_e10.txt"
-SKIPGRAM_NEWS_300D = "../data/Embeddings/skipgram_news_300d_30e.txt"
-CBOW_NEWS_300D = "../data/Embeddings/cbow_news_300d_30e.txt"
-EMOTION_EMBEDDING_PATH = "../data/Embeddings/word_emotion_dict.pkl"
-
 LOSS_CURVE_PATH = "../models/tmp/Curves/loss_curve.png"
 ACC_CURVE_PATH = "../models/tmp/Curves/accuracy_curve.png"
 
 TEXT_FIELD_PATH = "../models/tmp/Fields/text_field"
 LABEL_FIELD_PATH = "../models/tmp/Fields/label_field"
 LOG_PATH = "../models/tmp/Logs/log.txt"
-TEST_AUG_LOG_PATH = "../models/tmp/Logs/test_aug_log.txt"
 MODEL_PATH = "../models/tmp/"
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 N_EPOCHS = 20
-EMOTION_EMBEDDING_DIM = 10
 BATCH_SIZE = 128
 EMBEDDING_DIM = 300
 FILTER_SIZE = [3, 4, 5]
 N_FILTERS = 256
-START_DROPOUT = 0.1
-MIDDLE_DROPOUT = 0.2
-END_DROPOUT = 0.3
+LINEAR_DIM = 256
+DROPOUT = 0.5
 MAX_LENGTH = 300 # 1014 in original paper
 
 ADDING_NOISE = False
 LR_DECAY = False
-TRAIN_AUGMENTATION = False
-TEST_AUGMENTATION = False
-USE_EMOTION = True
