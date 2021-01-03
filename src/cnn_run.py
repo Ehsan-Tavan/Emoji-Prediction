@@ -74,7 +74,7 @@ class RunModel:
         define loss function and optimizer
         :param data_set: data_set class
         :return:
-            model: deepmoji model
+            model: cnn model
             criterion: loss function
             optimizer: optimizer function
         """
