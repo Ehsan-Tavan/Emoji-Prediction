@@ -134,9 +134,6 @@ class RunModel:
         best_validation_loss = float("inf")
         best_test_f_score = 0.0
 
-        best_val_loss_model = ""
-        best_test_f_score_model = ""
-
         losses_dict = dict()
         acc_dict = dict()
         losses_dict["train_loss"] = []
