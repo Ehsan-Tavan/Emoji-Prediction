@@ -16,11 +16,11 @@ import torch
 from torch import optim
 from torch import nn
 from emoji_prediction.utils.charCnn_data_util import DataSet, init_weights
-from emoji_prediction.methods.charCNN_model import CharCnn
+from emoji_prediction.methods.charCnn_model import CharCnn
 from emoji_prediction.train.train import train, evaluate
 from emoji_prediction.tools.log_helper import count_parameters, process_time,\
     model_result_log, model_result_save
-from emoji_prediction.config.charCNN_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
+from emoji_prediction.config.charCnn_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, DEVICE, N_EPOCHS, MODEL_PATH,\
     N_FILTERS, FILTER_SIZE, LOSS_CURVE_PATH, ACC_CURVE_PATH, ADDING_NOISE, LR_DECAY,\
     MAX_LENGTH, LINEAR_DIM, DROPOUT

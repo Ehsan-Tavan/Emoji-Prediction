@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from torchtext import data
 from sklearn.utils import class_weight
-from emoji_prediction.config.charCNN_config import BATCH_SIZE, TEXT_FIELD_PATH,\
+from emoji_prediction.config.charCnn_config import BATCH_SIZE, TEXT_FIELD_PATH,\
     LABEL_FIELD_PATH, DEVICE, MAX_LENGTH
 
 
