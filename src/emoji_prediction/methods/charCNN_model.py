@@ -31,11 +31,12 @@ class CharCnn(nn.Module):
         super().__init__()
 
         # Embedding Layer
-        self.embeddings = nn.Embedding(kwargs["vocab_size"], kwargs["embed_size"])
+        self.embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
+                                       embedding_dim=kwargs["vocab_size"])
         self.embeddings.weight = nn.Parameter(kwargs["embeddings"], requires_grad=False)
 
         conv1 = nn.Sequential(
-            nn.Conv1d(in_channels=kwargs["embed_size"],
+            nn.Conv1d(in_channels=kwargs["vocab_size"],
                       out_channels=kwargs["num_channels"],
                       kernel_size=7),
             nn.ReLU(),
