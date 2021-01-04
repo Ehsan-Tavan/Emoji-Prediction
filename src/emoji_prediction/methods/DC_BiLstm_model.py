@@ -11,6 +11,7 @@ DCBiLstm_model.py is written for DC_BiLstm model
 
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -67,7 +68,7 @@ class DCBiLstm(nn.Module):
                               num_layers=1,
                               bidirectional=kwargs["bidirectional"])
 
-        self.output = nn.Linear(in_features=kwargs["sen_len"],
+        self.output = nn.Linear(in_features=2*kwargs["lstm_hidden_dim"],
                                 out_features=kwargs["output_size"])
 
         self.dropout = nn.Dropout(kwargs["dropout"])
@@ -107,13 +108,13 @@ class DCBiLstm(nn.Module):
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
 
-        output_3 = output_3.permute(1, 0, 2)
+        output_3 = output_3.permute(1, 2, 0)
         # output_3.size() = [batch_size, sent_len, hid_dim * num_directions]
 
-        avg_pooling = nn.AdaptiveAvgPool2d((output_3.size()[1], 1))(output_3)
-        # avg_pooling.size() = [batch_size, sent_len, 1]
+        # avg_pooling = nn.AdaptiveAvgPool2d((output_3.size()[1], 1))(output_3)
+        avg_pooling = F.avg_pool1d(output_3, output_3.shape[2]).squeeze(2)
+        # avg_pooling.size() = [batch_size, sent_len]
 
-        avg_pooling = avg_pooling.squeeze(2)
         avg_pooling = self.dropout(avg_pooling)
         # avg_pooling.size() = [batch_size, sent_len]
 
