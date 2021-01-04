@@ -70,6 +70,8 @@ class DCBiLstm(nn.Module):
         self.output = nn.Linear(in_features=kwargs["sen_len"],
                                 out_features=kwargs["output_size"])
 
+        self.dropout = nn.Dropout(kwargs["dropout"])
+
     def forward(self, input_batch):
         # input_batch.size() = [batch_size, sent_len]
 
@@ -81,6 +83,7 @@ class DCBiLstm(nn.Module):
             embedded = torch.cat((embedded, emotion_embedded), dim=2)
 
         embedded = embedded.permute(1, 0, 2)
+        embedded = self.dropout(embedded)
         # embedded.size() = [sent_len, batch_size, embedding_dim]
 
         output_1, (hidden, cell) = self.lstm_1(embedded)
@@ -111,15 +114,7 @@ class DCBiLstm(nn.Module):
         # avg_pooling.size() = [batch_size, sent_len, 1]
 
         avg_pooling = avg_pooling.squeeze(2)
+        avg_pooling = self.dropout(avg_pooling)
         # avg_pooling.size() = [batch_size, sent_len]
 
         return self.output(avg_pooling)
-
-
-# model = DCBiLstm(vocab_size=100, embedding_dim=300, output_size=15,
-#                  lstm_hidden_dim=100, sen_len=16, emotion_embedding_dim=10,
-#                  pad_idx=0, bidirectional=True, use_emotion=True)
-#
-# text = torch.rand((20, 16))
-#
-# model.forward(input_batch=text.long())
