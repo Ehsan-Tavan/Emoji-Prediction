@@ -75,6 +75,11 @@ class DCBiLstm(nn.Module):
 
         embedded = self.embeddings(input_batch)
         # embedded.size() = [batch_size, sent_len, embedding_dim]
+
+        if self.use_emotion:
+            emotion_embedded = self.emotion_embeddings(input_batch)
+            embedded = torch.cat((embedded, emotion_embedded), dim=2)
+
         embedded = embedded.permute(1, 0, 2)
         # embedded.size() = [sent_len, batch_size, embedding_dim]
 
@@ -112,8 +117,8 @@ class DCBiLstm(nn.Module):
 
 
 # model = DCBiLstm(vocab_size=100, embedding_dim=300, output_size=15,
-#                  lstm_hidden_dim=100, sen_len=16,
-#                  pad_idx=0, bidirectional=True, use_emotion=False)
+#                  lstm_hidden_dim=100, sen_len=16, emotion_embedding_dim=10,
+#                  pad_idx=0, bidirectional=True, use_emotion=True)
 #
 # text = torch.rand((20, 16))
 #
