@@ -36,7 +36,14 @@ class RCNN(nn.Module):
                                        embedding_dim=kwargs["embedding_dim"],
                                        padding_idx=kwargs["pad_idx"])
 
-        self.lstm = nn.LSTM(input_size=kwargs["embedding_dim"],
+        if self.use_emotion:
+            self.emotion_embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
+                                                   embedding_dim=kwargs["emotion_embedding_dim"],
+                                                   padding_idx=kwargs["pad_idx"])
+
+        self.lstm = nn.LSTM(input_size=kwargs["embedding_dim"] +
+                            kwargs["emotion_embedding_dim"] if self.use_emotion
+                            else kwargs["embedding_dim"],
                             hidden_size=kwargs["lstm_hid_dim"],
                             num_layers=kwargs["lstm_layers"],
                             dropout=kwargs["dropout"] if kwargs["lstm_layers"] > 1
@@ -46,7 +53,10 @@ class RCNN(nn.Module):
         self.dropout = nn.Dropout(kwargs["dropout"])
 
         self.linear = nn.Linear(
-            in_features=kwargs["embedding_dim"] + 2 * kwargs["lstm_hid_dim"],
+            in_features=kwargs["embedding_dim"] +
+            kwargs["emotion_embedding_dim"] +
+            2 * kwargs["lstm_hid_dim"] if self.use_emotion
+            else kwargs["embedding_dim"] + 2 * kwargs["lstm_hid_dim"],
             out_features=kwargs["linear_units"]
         )
 
