@@ -14,6 +14,7 @@ from torch import nn
 import torch.nn.functional as F
 from elmoformanylangs import Embedder
 import numpy as np
+from emoji_prediction.config.elmo_config import DEVICE
 
 
 __author__ = "Ehsan Tavan"
@@ -67,7 +68,7 @@ class ELMo(nn.Module):
                 output_batch.append(el_out)
 
         tensor_output_batch = torch.FloatTensor(output_batch)
-        return tensor_output_batch
+        return tensor_output_batch.to(DEVICE)
 
     def forward(self, input_batch, text_length):
         # input_batch.size() = [batch_size, sent_len]
