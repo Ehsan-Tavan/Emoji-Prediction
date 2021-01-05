@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/04/2021"
+__date__ = "01/05/2021"
 
 
 class DCBiLstm(nn.Module):
@@ -109,11 +109,10 @@ class DCBiLstm(nn.Module):
         # _.size() = [num_layers * num_directions, batch_size, hid_dim]
 
         output_3 = output_3.permute(1, 2, 0)
-        # output_3.size() = [batch_size, sent_len, hid_dim * num_directions]
+        # output_3.size() = [batch_size, hid_dim * num_directions, sent_len]
 
-        # avg_pooling = nn.AdaptiveAvgPool2d((output_3.size()[1], 1))(output_3)
         avg_pooling = F.avg_pool1d(output_3, output_3.shape[2]).squeeze(2)
-        # avg_pooling.size() = [batch_size, sent_len]
+        # avg_pooling.size() = [batch_size, hid_dim * num_directions]
 
         avg_pooling = self.dropout(avg_pooling)
         # avg_pooling.size() = [batch_size, sent_len]
