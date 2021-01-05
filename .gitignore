@@ -6,5 +6,6 @@
 *.bin
 *.rar
 *.zip
+*.dic
 __pycache__
 *field
