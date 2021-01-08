@@ -25,7 +25,8 @@ from emoji_prediction.config.elmo_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D,\
     DEVICE, N_EPOCHS, MODEL_PATH, LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH,\
     LR_DECAY, ADDING_NOISE, TRAIN_AUGMENTATION, TEST_AUGMENTATION, USE_EMOTION,\
-    EMOTION_EMBEDDING_PATH, ELMO_OUTPUT_DIM, ELMO_MODEL_PATH, BATCH_SIZE
+    EMOTION_EMBEDDING_PATH, ELMO_OUTPUT_DIM, ELMO_MODEL_PATH, BATCH_SIZE, BIDIRECTIONAL,\
+    LSTM_LAYERS, LSTM_HIDDEN_DIM, DROPOUT
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -35,7 +36,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/05/2021"
+__date__ = "01/08/2021"
 
 
 logging.basicConfig(
@@ -73,7 +74,7 @@ class RunModel:
         define loss function and optimizer
         :param data_set:
         :return:
-            model: deepmoji model
+            model: elmo model
             criterion: loss function
             optimizer: optimizer function
         """
@@ -83,7 +84,9 @@ class RunModel:
                      output_size=data_set.num_vocab_dict["num_label"],
                      idx2word=data_set.text_field.vocab.itos,
                      elmo_output_dim=ELMO_OUTPUT_DIM, batch_size=BATCH_SIZE,
-                     elmo_model_path=ELMO_MODEL_PATH)
+                     elmo_model_path=ELMO_MODEL_PATH, dropout=DROPOUT,
+                     lstm_layers=LSTM_LAYERS, lstm_hidden_dim=LSTM_HIDDEN_DIM,
+                     bidirectional=BIDIRECTIONAL)
 
         # initializing model parameters
         model.apply(init_weights)
