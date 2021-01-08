@@ -21,7 +21,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/02/2021"
+__date__ = "01/08/2021"
 
 
 class ParallelCnnLstm(nn.Module):
@@ -30,6 +30,8 @@ class ParallelCnnLstm(nn.Module):
     """
     def __init__(self, **kwargs):
         super().__init__()
+
+        self.use_emotion = kwargs["use_emotion"]
 
         self.embeddings = nn.Embedding(kwargs["vocab_size"],
                                        embedding_dim=kwargs["embedding_dim"],
