@@ -17,7 +17,7 @@ from torchtext import data
 from torchtext.vocab import Vectors
 from sklearn.utils import class_weight
 from emoji_prediction.config.transformer_config import BATCH_SIZE, TEXT_FIELD_PATH,\
-    LABEL_FIELD_PATH, DEVICE, EMOTION_EMBEDDING_DIM, USE_EMOTION, MAX_LENGTH
+    LABEL_FIELD_PATH, DEVICE, EMOTION_EMBEDDING_DIM
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -121,10 +121,11 @@ class DataSet:
                 weight_matrix[idx] = emotion_embedding
         return weight_matrix
 
-    def load_data(self, sen_max_len=None):
+    def load_data(self, sen_max_len=None, use_emotion=False):
         """
         load_data method is written for creating iterator for train and test data
         :param sen_max_len: maximum length of sentence
+        :param use_emotion: if true model use emotion feature of words
         """
         # create fields
         logging.info("Start creating fields.")
@@ -158,7 +159,7 @@ class DataSet:
                                                     ))
 
         # create emotion matrix
-        if USE_EMOTION:
+        if use_emotion:
             self.emotion_matrix = self.create_emotion_embedding(self.files_address["word_emotion_path"],
                                                                 dictionary_fields["text_field"],
                                                                 EMOTION_EMBEDDING_DIM)
