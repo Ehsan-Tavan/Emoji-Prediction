@@ -25,7 +25,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/05/2021"
+__date__ = "01/08/2021"
 
 
 class ELMo(nn.Module):
@@ -38,7 +38,14 @@ class ELMo(nn.Module):
         self.elmo_embedding = Embedder(kwargs["elmo_model_path"],
                                        batch_size=kwargs["batch_size"])
 
-        self.output = nn.Linear(in_features=kwargs["elmo_output_dim"],
+        self.lstm = nn.LSTM(input_size=kwargs["elmo_output_dim"],
+                            hidden_size=kwargs["lstm_hidden_dim"],
+                            num_layers=kwargs["lstm_layer"],
+                            dropout=kwargs["dropout"] if kwargs["lstm_layers"] > 1
+                            else 0,
+                            bidirectional=kwargs["bidirectional"])
+
+        self.output = nn.Linear(in_features=2*kwargs["lstm_hidden_dim"],
                                 out_features=kwargs["output_size"])
 
         self.idx2word = kwargs["idx2word"]
@@ -75,10 +82,16 @@ class ELMo(nn.Module):
 
         elmo_output = self.elmo_encoder(input_batch, text_length)
         # input_batch.size() = [batch_size, sent_len, elmo_out_dim]
-        elmo_output = elmo_output.permute(0, 2, 1)
-        # input_batch.size() = [batch_size, elmo_out_dim, sent_len]
 
-        avg_pooling = F.avg_pool1d(elmo_output, elmo_output.shape[2]).squeeze(2)
-        # avg_pooling.size() = [batch_size, elmo_out_dim]
+        elmo_output = elmo_output.permute(1, 0, 2)
+        # input_batch.size() = [sent_len, batch_size, elmo_out_dim]
 
-        return self.output(avg_pooling)
+        output, (hidden, cell) = self.lstm(elmo_output)
+        # output_1.size() = [sent_len, batch_size, hid_dim * num_directions]
+        # hidden.size() = [num_layers * num_directions, batch_size, hid_dim]
+        # cell.size() = [num_layers * num_directions, batch_size, hid_dim]
+
+        hidden_concat = torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)
+        # hidden.size() = [batch_size, hid_dim * num_directions]
+
+        return self.output(hidden_concat)
