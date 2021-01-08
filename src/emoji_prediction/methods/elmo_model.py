@@ -48,6 +48,8 @@ class ELMo(nn.Module):
         self.output = nn.Linear(in_features=2*kwargs["lstm_hidden_dim"],
                                 out_features=kwargs["output_size"])
 
+        self.dropout = nn.Dropout(kwargs["dropout"])
+
         self.idx2word = kwargs["idx2word"]
         self.pad_idx = kwargs["pad_idx"]
 
@@ -91,7 +93,7 @@ class ELMo(nn.Module):
         # hidden.size() = [num_layers * num_directions, batch_size, hid_dim]
         # cell.size() = [num_layers * num_directions, batch_size, hid_dim]
 
-        hidden_concat = torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)
+        hidden_concat = self.dropout(torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
         # hidden.size() = [batch_size, hid_dim * num_directions]
 
         return self.output(hidden_concat)
