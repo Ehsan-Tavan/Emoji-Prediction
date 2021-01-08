@@ -27,7 +27,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/25/2020"
+__date__ = "01/08/2021"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -71,16 +71,21 @@ class DataSet:
         return input_df[:500]
 
     @staticmethod
-    def create_fields():
+    def create_fields(sen_max_len=None):
         """
         This method is writen for creating torchtext fields
+        :param sen_max_len: maximum length of sentence
         :return:
             dictionary_fields: dictionary of data fields
             data_fields: list of data fields
         """
         # Create Field for data
-        text_field = data.Field(tokenize=hazm.word_tokenize, batch_first=True, include_lengths=True,
-                                fix_length=MAX_LENGTH)
+        if sen_max_len is not None:
+            text_field = data.Field(tokenize=hazm.word_tokenize, batch_first=True, include_lengths=True,
+                                    fix_length=sen_max_len)
+        else:
+            text_field = data.Field(tokenize=hazm.word_tokenize, batch_first=True, include_lengths=True)
+
         label_field = data.LabelField()
         dictionary_fields = {
             "text_field": text_field,
@@ -116,13 +121,14 @@ class DataSet:
                 weight_matrix[idx] = emotion_embedding
         return weight_matrix
 
-    def load_data(self):
+    def load_data(self, sen_max_len=None):
         """
         load_data method is written for creating iterator for train and test data
+        :param sen_max_len: maximum length of sentence
         """
         # create fields
         logging.info("Start creating fields.")
-        dictionary_fields, data_fields = self.create_fields()
+        dictionary_fields, data_fields = self.create_fields(sen_max_len)
 
         # Load data from pd.DataFrame into torchtext.data.Dataset
         logging.info("Start creating train example.")
