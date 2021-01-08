@@ -120,16 +120,17 @@ class DataSet:
         return weight_matrix
 
     def load_data(self, text_field_path, label_field_path, device, batch_size, sen_max_len=None,
-                  use_emotion=False, emotion_embedding_dim=10):
+                  use_emotion=False, emotion_embedding_dim=10, min_freq=20):
         """
         load_data method is written for creating iterator for train and test data
-        :param sen_max_len: maximum length of sentence
-        :param use_emotion: if true model use emotion feature of words
-        :param emotion_embedding_dim: dimension of emotion embedding
         :param text_field_path: path for text_field
         :param label_field_path: path for label_field
         :param device: gpu or cpu
         :param batch_size: number of sample in batch
+        :param sen_max_len: maximum length of sentence
+        :param use_emotion: if true model use emotion feature of words
+        :param emotion_embedding_dim: dimension of emotion embedding
+        :param min_freq: min frequency of words
         """
         # create fields
         logging.info("Start creating fields.")
@@ -156,7 +157,7 @@ class DataSet:
         # build vocab in all fields
         logging.info("Start creating text_field vocabs.")
         dictionary_fields["text_field"].build_vocab(train_data,
-                                                    min_freq=20,
+                                                    min_freq=min_freq,
                                                     unk_init=torch.Tensor.normal_,
                                                     vectors=Vectors(
                                                         self.files_address["embedding_path"]
