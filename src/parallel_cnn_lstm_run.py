@@ -26,7 +26,8 @@ from emoji_prediction.config.parallel_cnn_lstm_config import LOG_PATH, TRAIN_NOR
     DEVICE, N_EPOCHS, MODEL_PATH, N_FILTERS, FILTER_SIZE, START_DROPOUT, MIDDLE_DROPOUT,\
     END_DROPOUT, LOSS_CURVE_PATH, ACC_CURVE_PATH, ADDING_NOISE, LR_DECAY, TRAIN_AUGMENTATION,\
     TEST_AUGMENTATION, TEST_AUG_LOG_PATH, EMOTION_EMBEDDING_PATH, EMOTION_EMBEDDING_DIM,\
-    USE_EMOTION, LSTM_UNITS, LSTM_LAYERS, BIDIRECTIONAL
+    USE_EMOTION, LSTM_UNITS, LSTM_LAYERS, BIDIRECTIONAL, TEXT_FIELD_PATH, LABEL_FIELD_PATH,\
+    BATCH_SIZE, MAX_LENGTH, MIN_FREQ
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -36,7 +37,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/02/2021"
+__date__ = "01/08/2021"
 
 
 logging.basicConfig(
@@ -64,7 +65,10 @@ class RunModel:
                            validation_data_path=VALIDATION_NORMAL_DATA_PATH,
                            embedding_path=SKIPGRAM_NEWS_300D,
                            word_emotion_path=EMOTION_EMBEDDING_PATH)
-        data_set.load_data()
+        data_set.load_data(text_field_path=TEXT_FIELD_PATH, label_field_path=LABEL_FIELD_PATH,
+                           device=DEVICE, batch_size=BATCH_SIZE, sen_max_len=MAX_LENGTH,
+                           use_emotion=USE_EMOTION, emotion_embedding_dim=EMOTION_EMBEDDING_DIM,
+                           min_freq=MIN_FREQ)
         return data_set
 
     @staticmethod
