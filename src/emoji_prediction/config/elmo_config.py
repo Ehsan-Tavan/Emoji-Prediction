@@ -17,7 +17,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/05/2021"
+__date__ = "01/08/2021"
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
 RAW_DATA_PATH = "../data/Raw/first_categori_tweets.csv"
@@ -54,6 +54,10 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 N_EPOCHS = 20
 BATCH_SIZE = 8
 ELMO_OUTPUT_DIM = 1024
+LSTM_HIDDEN_DIM = 128
+LSTM_LAYERS = 2
+DROPOUT = 0.2
+BIDIRECTIONAL = True
 
 ADDING_NOISE = False
 LR_DECAY = False
