@@ -16,8 +16,7 @@ import pickle as pkl
 from torchtext import data
 from torchtext.vocab import Vectors
 from sklearn.utils import class_weight
-from emoji_prediction.config.transformer_config import BATCH_SIZE, TEXT_FIELD_PATH,\
-    LABEL_FIELD_PATH, DEVICE
+from emoji_prediction.config.transformer_config import BATCH_SIZE, DEVICE
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -121,12 +120,15 @@ class DataSet:
                 weight_matrix[idx] = emotion_embedding
         return weight_matrix
 
-    def load_data(self, sen_max_len=None, use_emotion=False, emotion_embedding_dim=10):
+    def load_data(self, text_field_path, label_field_path, sen_max_len=None,
+                  use_emotion=False, emotion_embedding_dim=10):
         """
         load_data method is written for creating iterator for train and test data
         :param sen_max_len: maximum length of sentence
         :param use_emotion: if true model use emotion feature of words
         :param emotion_embedding_dim: dimension of emotion embedding
+        :param text_field_path: path for text_field
+        :param label_field_path: path for label_field
         """
         # create fields
         logging.info("Start creating fields.")
@@ -187,7 +189,7 @@ class DataSet:
         self.class_weight = self.calculate_class_weight(dictionary_fields)
 
         # saving fields
-        self.save_fields(dictionary_fields)
+        self.save_fields(dictionary_fields, text_field_path, label_field_path)
 
         # creating iterators for training model
         logging.info("Start creating iterator.")
@@ -200,18 +202,20 @@ class DataSet:
         logging.info("Loaded %d test examples", len(test_data))
 
     @staticmethod
-    def save_fields(dictionary_fields):
+    def save_fields(dictionary_fields, text_field_path, label_field_path):
         """
         save_fields method is writen for saving fields
         :param dictionary_fields: dictionary of fields
+        :param text_field_path: path for text_field
+        :param label_field_path: path for label_field
         """
         logging.info("Start saving fields...")
         # save text_field
-        torch.save(dictionary_fields["text_field"], TEXT_FIELD_PATH)
+        torch.save(dictionary_fields["text_field"], text_field_path)
         logging.info("text_field is saved.")
 
         # save label_field
-        torch.save(dictionary_fields["label_field"], LABEL_FIELD_PATH)
+        torch.save(dictionary_fields["label_field"], label_field_path)
         logging.info("label_field is saved.")
 
     @staticmethod
