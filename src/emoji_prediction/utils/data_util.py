@@ -119,7 +119,7 @@ class DataSet:
                 weight_matrix[idx] = emotion_embedding
         return weight_matrix
 
-    def load_data(self, text_field_path, label_field_path, sen_max_len=None,
+    def load_data(self, text_field_path, label_field_path, device, batch_size, sen_max_len=None,
                   use_emotion=False, emotion_embedding_dim=10):
         """
         load_data method is written for creating iterator for train and test data
@@ -128,6 +128,8 @@ class DataSet:
         :param emotion_embedding_dim: dimension of emotion embedding
         :param text_field_path: path for text_field
         :param label_field_path: path for label_field
+        :param device: gpu or cpu
+        :param batch_size: number of sample in batch
         """
         # create fields
         logging.info("Start creating fields.")
@@ -194,7 +196,9 @@ class DataSet:
         logging.info("Start creating iterator.")
         self.iterator_dict = self.creating_iterator(train_data=train_data,
                                                     valid_data=validation_data,
-                                                    test_data=test_data)
+                                                    test_data=test_data,
+                                                    batch_size=batch_size,
+                                                    device=device)
 
         logging.info("Loaded %d train examples", len(train_data))
         logging.info("Loaded %d valid examples", len(validation_data))
