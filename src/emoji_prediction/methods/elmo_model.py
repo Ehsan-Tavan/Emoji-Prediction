@@ -25,7 +25,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/08/2021"
+__date__ = "01/09/2021"
 
 
 class ELMo(nn.Module):
@@ -40,7 +40,7 @@ class ELMo(nn.Module):
 
         self.lstm = nn.LSTM(input_size=kwargs["elmo_output_dim"],
                             hidden_size=kwargs["lstm_hidden_dim"],
-                            num_layers=kwargs["lstm_layer"],
+                            num_layers=kwargs["lstm_layers"],
                             dropout=kwargs["dropout"] if kwargs["lstm_layers"] > 1
                             else 0,
                             bidirectional=kwargs["bidirectional"])
