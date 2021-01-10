@@ -212,25 +212,27 @@ class DataSet:
             train_data: train dataSet
             valid_data: validation dataSet
             test_data: test dataSet
+            batch_size: number of sample in batch
+            device: gpu or cpu
         :return:
             iterator_dict: dictionary of iterators
         """
         iterator_dict = {
             "train_iterator": data.BucketIterator(kwargs["train_data"],
-                                                  batch_size=BATCH_SIZE,
+                                                  batch_size=kwargs["batch_size"],
                                                   sort=False,
                                                   shuffle=True,
-                                                  device=DEVICE),
+                                                  device=kwargs["device"]),
             "valid_iterator": data.BucketIterator(kwargs["valid_data"],
-                                                  batch_size=BATCH_SIZE,
+                                                  batch_size=kwargs["batch_size"],
                                                   sort=False,
                                                   shuffle=True,
-                                                  device=DEVICE),
+                                                  device=kwargs["device"]),
             "test_iterator": data.BucketIterator(kwargs["test_data"],
-                                                 batch_size=BATCH_SIZE,
+                                                 batch_size=kwargs["batch_size"],
                                                  sort=False,
                                                  shuffle=True,
-                                                 device=DEVICE)
+                                                 device=kwargs["device"])
         }
         return iterator_dict
 
