@@ -23,7 +23,7 @@ from emoji_prediction.tools.log_helper import count_parameters, process_time,\
 from emoji_prediction.config.charCnn_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, DEVICE, N_EPOCHS, MODEL_PATH,\
     N_FILTERS, FILTER_SIZE, LOSS_CURVE_PATH, ACC_CURVE_PATH, ADDING_NOISE, LR_DECAY,\
-    MAX_LENGTH, LINEAR_DIM, DROPOUT
+    MAX_LENGTH, LINEAR_DIM, DROPOUT, TEXT_FIELD_PATH, LABEL_FIELD_PATH, BATCH_SIZE
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -59,7 +59,10 @@ class RunModel:
         data_set = DataSet(train_data_path=TRAIN_NORMAL_DATA_PATH,
                            test_data_path=TEST_NORMAL_DATA_PATH,
                            validation_data_path=VALIDATION_NORMAL_DATA_PATH,)
-        data_set.load_data()
+        data_set.load_data(text_field_path=TEXT_FIELD_PATH,
+                           label_field_path=LABEL_FIELD_PATH,
+                           device=DEVICE, batch_size=BATCH_SIZE,
+                           sen_max_len=MAX_LENGTH)
         return data_set
 
     @staticmethod
@@ -78,7 +81,12 @@ class RunModel:
                         embeddings=data_set.embeddings, num_channels=N_FILTERS,
                         filter_sizes=FILTER_SIZE, seq_len=MAX_LENGTH,
                         linear_size=LINEAR_DIM, dropout=DROPOUT,
-                        output_size=data_set.num_vocab_dict["num_label"])
+                        output_size=data_set.num_vocab_dict["num_label"],
+                        pad_idx=data_set.pad_idx_dict["token_pad_idx"])
+
+        model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] = \
+            torch.zeros(data_set.num_vocab_dict["num_char"])
+        model.embeddings.weight.requires_grad = True
 
         # initializing model parameters
         model.apply(init_weights)
