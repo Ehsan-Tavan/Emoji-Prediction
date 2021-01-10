@@ -20,7 +20,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/03/2021"
+__date__ = "01/10/2021"
 
 
 class CharCnn(nn.Module):
@@ -32,8 +32,8 @@ class CharCnn(nn.Module):
 
         # Embedding Layer
         self.embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
-                                       embedding_dim=kwargs["vocab_size"])
-        self.embeddings.weight = nn.Parameter(kwargs["embeddings"], requires_grad=False)
+                                       embedding_dim=kwargs["vocab_size"],
+                                       padding_idx=kwargs["pad_idx"])
 
         conv1 = nn.Sequential(
             nn.Conv1d(in_channels=kwargs["vocab_size"],
@@ -94,9 +94,9 @@ class CharCnn(nn.Module):
         self.linear_layers = nn.Sequential(linear1, linear2, linear3)
 
     def forward(self, input_batch):
-        # input_batch.size() = [seq_len, batch_size]
+        # input_batch.size() = [batch_size, seq_len]
 
-        embedded_sent = self.embeddings(input_batch).permute(1, 2, 0)
+        embedded_sent = self.embeddings(input_batch).permute(0, 2, 1)
         # embedded_sent.size() = [batch_size, embed_size, seq_len]
 
         conv_out = self.convolutional_layers(embedded_sent)
