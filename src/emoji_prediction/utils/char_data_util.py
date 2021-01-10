@@ -123,12 +123,12 @@ class DataSet:
         # build vocab in all fields
         logging.info("Start creating text_field vocabs.")
         dictionary_fields["text_field"].build_vocab(train_data)
-        embedding_mat = self.get_embedding_matrix(list(dictionary_fields["text_field"]
-                                                       .vocab.stoi.keys()))
-        dictionary_fields["text_field"].vocab.set_vectors(
-            dictionary_fields["text_field"].vocab.stoi,
-            torch.FloatTensor(embedding_mat),
-            len(dictionary_fields["text_field"].vocab.stoi))
+        #embedding_mat = self.get_embedding_matrix(list(dictionary_fields["text_field"]
+        #                                               .vocab.stoi.keys()))
+        #dictionary_fields["text_field"].vocab.set_vectors(
+        #    dictionary_fields["text_field"].vocab.stoi,
+        #    torch.FloatTensor(embedding_mat),
+        #    len(dictionary_fields["text_field"].vocab.stoi))
 
         self.embeddings = dictionary_fields["text_field"].vocab.vectors
 
@@ -168,18 +168,20 @@ class DataSet:
         return onehot_matrix
 
     @staticmethod
-    def save_fields(dictionary_fields):
+    def save_fields(dictionary_fields, text_field_path, label_field_path):
         """
         save_fields method is writen for saving fields
         :param dictionary_fields: dictionary of fields
+        :param text_field_path: path for text_field
+        :param label_field_path: path for label_field
         """
         logging.info("Start saving fields...")
         # save text_field
-        torch.save(dictionary_fields["text_field"], TEXT_FIELD_PATH)
+        torch.save(dictionary_fields["text_field"], text_field_path)
         logging.info("text_field is saved.")
 
         # save label_field
-        torch.save(dictionary_fields["label_field"], LABEL_FIELD_PATH)
+        torch.save(dictionary_fields["label_field"], label_field_path)
         logging.info("label_field is saved.")
 
     @staticmethod
