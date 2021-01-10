@@ -95,9 +95,12 @@ class DataSet:
         data_fields = [("text", text_field), ("label", label_field)]
         return dictionary_fields, data_fields
 
-    def load_data(self, sen_max_len):
+    def load_data(self, text_field_path, label_field_path, sen_max_len=None):
         """
         load_data method is written for creating iterator for train and test data
+        :param text_field_path: path for text_field
+        :param label_field_path: path for label_field
+        :param sen_max_len: maximum length of sentence
         """
         # create fields
         logging.info("Start creating fields.")
@@ -148,7 +151,7 @@ class DataSet:
         self.class_weight = self.calculate_class_weight(dictionary_fields)
 
         # saving fields
-        self.save_fields(dictionary_fields)
+        self.save_fields(dictionary_fields, text_field_path, label_field_path)
 
         # creating iterators for training model
         logging.info("Start creating iterator.")
