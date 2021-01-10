@@ -135,9 +135,10 @@ class DataSet:
             embedding_mat = self.get_embedding_matrix(list(
                 dictionary_fields["text_field"].vocab.stoi.keys()))
 
-        dictionary_fields["text_field"].vocab.set_vectors(
-            dictionary_fields["text_field"].vocab.stoi,
-            torch.FloatTensor(embedding_mat), len(dictionary_fields["text_field"].vocab.stoi))
+            dictionary_fields["text_field"].vocab.set_vectors(
+                dictionary_fields["text_field"].vocab.stoi,
+                torch.FloatTensor(embedding_mat),
+                len(dictionary_fields["text_field"].vocab.stoi))
 
         # self.vocab = dictionary_fields["text_field"].vocab
         self.embeddings = dictionary_fields["text_field"].vocab.vectors
