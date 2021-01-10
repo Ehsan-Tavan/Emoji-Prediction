@@ -4,7 +4,7 @@
 # pylint: disable-msg=import-error
 
 """
-charCNN_data_util.py is writen for creating iterator and save field
+char_data_util.py is writen for creating iterator and save field
 """
 
 import logging
