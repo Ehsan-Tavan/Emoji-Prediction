@@ -14,7 +14,7 @@ import pandas as pd
 from torchtext import data
 from sklearn.utils import class_weight
 from emoji_prediction.config.charCnn_config import BATCH_SIZE, TEXT_FIELD_PATH,\
-    LABEL_FIELD_PATH, DEVICE, MAX_LENGTH
+    LABEL_FIELD_PATH, DEVICE
 
 
 __author__ = "Ehsan Tavan"
@@ -25,7 +25,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/03/2021"
+__date__ = "01/10/2021"
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO)
@@ -69,16 +69,22 @@ class DataSet:
     def tokenizer(sent):
         return list(sent[::-1])
 
-    def create_fields(self):
+    def create_fields(self, sen_max_len=None):
         """
         This method is writen for creating torchtext fields
+        :param sen_max_len: maximum length of sentence
         :return:
             dictionary_fields: dictionary of data fields
             data_fields: list of data fields
         """
         # Create Field for data
-        text_field = data.Field(tokenize=self.tokenizer, fix_length=MAX_LENGTH,
-                                include_lengths=True)
+        # Create Field for data
+        if sen_max_len is not None:
+            text_field = data.Field(tokenize=self.tokenizer, batch_first=True, include_lengths=True,
+                                    fix_length=sen_max_len)
+        else:
+            text_field = data.Field(tokenize=self.tokenizer, batch_first=True, include_lengths=True)
+
         label_field = data.LabelField()
         dictionary_fields = {
             "text_field": text_field,
