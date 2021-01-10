@@ -127,12 +127,6 @@ class DataSet:
         # build vocab in all fields
         logging.info("Start creating text_field vocabs.")
         dictionary_fields["text_field"].build_vocab(train_data)
-        #embedding_mat = self.get_embedding_matrix(list(dictionary_fields["text_field"]
-        #                                               .vocab.stoi.keys()))
-        #dictionary_fields["text_field"].vocab.set_vectors(
-        #    dictionary_fields["text_field"].vocab.stoi,
-        #    torch.FloatTensor(embedding_mat),
-        #    len(dictionary_fields["text_field"].vocab.stoi))
 
         self.embeddings = dictionary_fields["text_field"].vocab.vectors
 
