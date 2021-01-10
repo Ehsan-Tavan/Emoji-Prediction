@@ -160,7 +160,9 @@ class DataSet:
         logging.info("Start creating iterator.")
         self.iterator_dict = self.creating_iterator(train_data=train_data,
                                                     valid_data=validation_data,
-                                                    test_data=test_data)
+                                                    test_data=test_data,
+                                                    batch_size=batch_size,
+                                                    device=device)
 
         logging.info("Loaded %d train examples", len(train_data))
         logging.info("Loaded %d valid examples", len(validation_data))
