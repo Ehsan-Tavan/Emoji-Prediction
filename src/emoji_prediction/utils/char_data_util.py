@@ -95,13 +95,13 @@ class DataSet:
         data_fields = [("text", text_field), ("label", label_field)]
         return dictionary_fields, data_fields
 
-    def load_data(self):
+    def load_data(self, sen_max_len):
         """
         load_data method is written for creating iterator for train and test data
         """
         # create fields
         logging.info("Start creating fields.")
-        dictionary_fields, data_fields = self.create_fields()
+        dictionary_fields, data_fields = self.create_fields(sen_max_len)
 
         # Load data from pd.DataFrame into torchtext.data.Dataset
         logging.info("Start creating train example.")
