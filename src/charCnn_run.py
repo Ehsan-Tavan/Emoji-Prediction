@@ -22,7 +22,7 @@ from emoji_prediction.tools.log_helper import count_parameters, process_time,\
     model_result_log, model_result_save
 from emoji_prediction.config.charCnn_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, DEVICE, N_EPOCHS, MODEL_PATH,\
-    N_FILTERS, FILTER_SIZE, LOSS_CURVE_PATH, ACC_CURVE_PATH, ADDING_NOISE, LR_DECAY,\
+    N_FILTERS, LOSS_CURVE_PATH, ACC_CURVE_PATH, ADDING_NOISE, LR_DECAY,\
     MAX_LENGTH, LINEAR_DIM, DROPOUT, TEXT_FIELD_PATH, LABEL_FIELD_PATH, BATCH_SIZE
 
 __author__ = "Ehsan Tavan"
@@ -79,8 +79,8 @@ class RunModel:
         # create model
         model = CharCnn(vocab_size=data_set.num_vocab_dict["num_char"],
                         embeddings=data_set.embeddings, num_channels=N_FILTERS,
-                        filter_sizes=FILTER_SIZE, seq_len=MAX_LENGTH,
-                        linear_size=LINEAR_DIM, dropout=DROPOUT,
+                        seq_len=MAX_LENGTH, linear_size=LINEAR_DIM,
+                        dropout=DROPOUT,
                         output_size=data_set.num_vocab_dict["num_label"],
                         pad_idx=data_set.pad_idx_dict["token_pad_idx"])
 
