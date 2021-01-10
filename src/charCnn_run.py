@@ -22,7 +22,7 @@ from emoji_prediction.tools.log_helper import count_parameters, process_time,\
     model_result_log, model_result_save
 from emoji_prediction.config.charCnn_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, DEVICE, N_EPOCHS, MODEL_PATH,\
-    N_FILTERS, LOSS_CURVE_PATH, ACC_CURVE_PATH, ADDING_NOISE, LR_DECAY,\
+    N_FILTERS, LOSS_CURVE_PATH, ACC_CURVE_PATH, ADDING_NOISE, LR_DECAY, ONE_HOT,\
     MAX_LENGTH, LINEAR_DIM, DROPOUT, TEXT_FIELD_PATH, LABEL_FIELD_PATH, BATCH_SIZE
 
 __author__ = "Ehsan Tavan"
@@ -62,7 +62,8 @@ class RunModel:
         data_set.load_data(text_field_path=TEXT_FIELD_PATH,
                            label_field_path=LABEL_FIELD_PATH,
                            device=DEVICE, batch_size=BATCH_SIZE,
-                           sen_max_len=MAX_LENGTH)
+                           sen_max_len=MAX_LENGTH,
+                           one_hot=ONE_HOT)
         return data_set
 
     @staticmethod
@@ -83,6 +84,9 @@ class RunModel:
                         dropout=DROPOUT,
                         output_size=data_set.num_vocab_dict["num_label"],
                         pad_idx=data_set.pad_idx_dict["token_pad_idx"])
+
+        if ONE_HOT:
+            model.embeddings.weight.data.copy_(data_set.embeddings)
 
         model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] = \
             torch.zeros(data_set.num_vocab_dict["num_char"])
