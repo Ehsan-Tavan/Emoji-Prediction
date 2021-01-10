@@ -32,7 +32,8 @@ class CharCnn(nn.Module):
 
         # Embedding Layer
         self.embeddings = nn.Embedding(num_embeddings=kwargs["vocab_size"],
-                                       embedding_dim=kwargs["vocab_size"],
+                                       embedding_dim=kwargs["vocab_size"] if kwargs["one_hot"]
+                                       else kwargs["embedding_dim"],
                                        padding_idx=kwargs["pad_idx"])
 
         conv1 = nn.Sequential(
