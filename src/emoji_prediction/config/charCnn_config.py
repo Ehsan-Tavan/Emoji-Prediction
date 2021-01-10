@@ -45,8 +45,6 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 N_EPOCHS = 20
 BATCH_SIZE = 128
-EMBEDDING_DIM = 300
-FILTER_SIZE = [3, 4, 5]
 N_FILTERS = 256
 LINEAR_DIM = 256
 DROPOUT = 0.5
