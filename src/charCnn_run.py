@@ -23,7 +23,8 @@ from emoji_prediction.tools.log_helper import count_parameters, process_time,\
 from emoji_prediction.config.charCnn_config import LOG_PATH, TRAIN_NORMAL_DATA_PATH,\
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, DEVICE, N_EPOCHS, MODEL_PATH,\
     N_FILTERS, LOSS_CURVE_PATH, ACC_CURVE_PATH, ADDING_NOISE, LR_DECAY, ONE_HOT,\
-    MAX_LENGTH, LINEAR_DIM, DROPOUT, TEXT_FIELD_PATH, LABEL_FIELD_PATH, BATCH_SIZE
+    MAX_LENGTH, LINEAR_DIM, DROPOUT, TEXT_FIELD_PATH, LABEL_FIELD_PATH, BATCH_SIZE,\
+    EMBEDDING_DIM
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -79,17 +80,21 @@ class RunModel:
         """
         # create model
         model = CharCnn(vocab_size=data_set.num_vocab_dict["num_char"],
+                        output_size=data_set.num_vocab_dict["num_label"],
+                        pad_idx=data_set.pad_idx_dict["token_pad_idx"],
                         embeddings=data_set.embeddings, num_channels=N_FILTERS,
                         seq_len=MAX_LENGTH, linear_size=LINEAR_DIM,
-                        dropout=DROPOUT,
-                        output_size=data_set.num_vocab_dict["num_label"],
-                        pad_idx=data_set.pad_idx_dict["token_pad_idx"])
+                        dropout=DROPOUT, embedding_dim=EMBEDDING_DIM,
+                        one_hot=ONE_HOT)
 
         if ONE_HOT:
             model.embeddings.weight.data.copy_(data_set.embeddings)
+            model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] = \
+                torch.zeros(data_set.num_vocab_dict["num_char"])
+        else:
+            model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] = \
+                torch.zeros(EMBEDDING_DIM)
 
-        model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] = \
-            torch.zeros(data_set.num_vocab_dict["num_char"])
         model.embeddings.weight.requires_grad = True
 
         # initializing model parameters
