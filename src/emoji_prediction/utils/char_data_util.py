@@ -67,7 +67,7 @@ class DataSet:
 
     @staticmethod
     def tokenizer(sent):
-        return list(sent[::-1])
+        return list(sent[::1])
 
     def create_fields(self, sen_max_len=None):
         """
