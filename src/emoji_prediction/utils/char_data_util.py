@@ -95,11 +95,14 @@ class DataSet:
         data_fields = [("text", text_field), ("label", label_field)]
         return dictionary_fields, data_fields
 
-    def load_data(self, text_field_path, label_field_path, sen_max_len=None):
+    def load_data(self, text_field_path, label_field_path, device, batch_size,
+                  sen_max_len=None):
         """
         load_data method is written for creating iterator for train and test data
         :param text_field_path: path for text_field
         :param label_field_path: path for label_field
+        :param device: gpu or cpu
+        :param batch_size: number of sample in batch
         :param sen_max_len: maximum length of sentence
         """
         # create fields
