@@ -91,11 +91,11 @@ class RunModel:
             model.embeddings.weight.data.copy_(data_set.embeddings)
             model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] = \
                 torch.zeros(data_set.num_vocab_dict["num_char"])
+            model.embeddings.weight.requires_grad = False
         else:
             model.embeddings.weight.data[data_set.pad_idx_dict["token_pad_idx"]] = \
                 torch.zeros(EMBEDDING_DIM)
-
-        model.embeddings.weight.requires_grad = True
+            model.embeddings.weight.requires_grad = True
 
         # initializing model parameters
         model.apply(init_weights)
