@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import torch
 from torch import optim
 from torch import nn
-from emoji_prediction.utils.charCnn_data_util import DataSet, init_weights
+from emoji_prediction.utils.char_data_util import DataSet, init_weights
 from emoji_prediction.methods.charCnn_model import CharCnn
 from emoji_prediction.train.train import train, evaluate
 from emoji_prediction.tools.log_helper import count_parameters, process_time,\
@@ -33,7 +33,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/03/2020"
+__date__ = "01/10/2020"
 
 
 logging.basicConfig(
