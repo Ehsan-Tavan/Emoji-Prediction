@@ -37,7 +37,8 @@ class CharCnn(nn.Module):
                                        padding_idx=kwargs["pad_idx"])
 
         conv1 = nn.Sequential(
-            nn.Conv1d(in_channels=kwargs["vocab_size"],
+            nn.Conv1d(in_channels=kwargs["vocab_size"] if kwargs["one_hot"]
+                      else kwargs["embedding_dim"],
                       out_channels=kwargs["num_channels"],
                       kernel_size=7),
             nn.ReLU(),
