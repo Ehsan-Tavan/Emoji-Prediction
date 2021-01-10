@@ -94,7 +94,7 @@ class DataSet:
         return dictionary_fields, data_fields
 
     def load_data(self, text_field_path, label_field_path, device, batch_size,
-                  sen_max_len=None):
+                  sen_max_len=None, one_hot=False):
         """
         load_data method is written for creating iterator for train and test data
         :param text_field_path: path for text_field
@@ -102,6 +102,7 @@ class DataSet:
         :param device: gpu or cpu
         :param batch_size: number of sample in batch
         :param sen_max_len: maximum length of sentence
+        :param one_hot: if true create one-hot vector for character
         """
         # create fields
         logging.info("Start creating fields.")
@@ -128,6 +129,17 @@ class DataSet:
         logging.info("Start creating text_field vocabs.")
         dictionary_fields["text_field"].build_vocab(train_data)
 
+        self.embeddings = dictionary_fields["text_field"].vocab.vectors
+
+        if one_hot:
+            embedding_mat = self.get_embedding_matrix(list(
+                dictionary_fields["text_field"].vocab.stoi.keys()))
+
+        dictionary_fields["text_field"].vocab.set_vectors(
+            dictionary_fields["text_field"].vocab.stoi,
+            torch.FloatTensor(embedding_mat), len(dictionary_fields["text_field"].vocab.stoi))
+
+        # self.vocab = dictionary_fields["text_field"].vocab
         self.embeddings = dictionary_fields["text_field"].vocab.vectors
 
         logging.info("Start creating label_field vocabs.")
