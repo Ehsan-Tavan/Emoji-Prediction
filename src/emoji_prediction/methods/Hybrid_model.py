@@ -64,21 +64,18 @@ class Hybrid(nn.Module):
         # input_token.size() = [batch_size, token_sen_len]
 
         char_embedded = self.char_embeddings(input_char)
-        char_embedded = self.dropout(char_embedded)
         # input_char.size() = [batch_size, char_sen_len, char_emd_dim]
 
         char_embedded = char_embedded.permute(0, 2, 1)
         # input_char.size() = [batch_size, char_emd_dim, char_sen_len]
 
         token_embedded = self.token_embeddings(input_token)
-        token_embedded = self.dropout(token_embedded)
         # input_token.size() = [batch_size, token_sen_len, vocab_emb_dim]
 
         token_embedded = token_embedded.permute(1, 0, 2)
         # input_token.size() = [token_sen_len, batch_size, vocab_emb_dim]
 
         conv_out = self.conv(char_embedded)
-        conv_out = self.dropout(conv_out)
         # conv_out.size() = [batch_size, num_channels, char_sen_len - 2]
 
         maxpool_out = self.cnn_btn(F.max_pool1d(conv_out, conv_out.shape[2]).squeeze(2))
@@ -90,10 +87,10 @@ class Hybrid(nn.Module):
         # cell.size() = [num_layers * num_directions, batch_size, hid_dim]
 
         hidden_concat = self.lstm_btn(torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-        hidden_concat = self.dropout(hidden_concat)
         # hidden.size() = [batch size, hid dim * num directions]
 
         finall_feature = torch.cat((maxpool_out, hidden_concat), dim=1)
+        finall_feature = self.dropout(finall_feature)
         # output_feature.size() = [batch size, hid dim * num directions + num_channels]
 
         return self.output(finall_feature)
