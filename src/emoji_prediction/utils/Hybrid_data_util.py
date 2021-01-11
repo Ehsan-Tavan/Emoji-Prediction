@@ -99,7 +99,7 @@ class DataSet:
         }
 
         # create list of data fields
-        data_fields = [("token", token_field), ("char", char_field), ("label", label_field)]
+        data_fields = [("token", token_field), ("label", label_field), ("char", char_field)]
         return dictionary_fields, data_fields
 
     @staticmethod
