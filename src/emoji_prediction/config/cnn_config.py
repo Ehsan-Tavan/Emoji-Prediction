@@ -17,7 +17,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/4/2020"
+__date__ = "01/12/2021"
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
 RAW_DATA_PATH = "../data/Raw/first_categori_tweets.csv"
@@ -57,6 +57,8 @@ N_FILTERS = 256
 START_DROPOUT = 0.1
 MIDDLE_DROPOUT = 0.2
 END_DROPOUT = 0.3
+MIN_FREQ = 20
+MAX_LENGTH = None
 
 ADDING_NOISE = False
 LR_DECAY = False
