@@ -25,7 +25,8 @@ from emoji_prediction.config.deepmoji_config import LOG_PATH, TRAIN_NORMAL_DATA_
     TEST_NORMAL_DATA_PATH, VALIDATION_NORMAL_DATA_PATH, SKIPGRAM_NEWS_300D, EMBEDDING_DIM,\
     DEVICE, N_EPOCHS, MODEL_PATH, START_DROPOUT, FINAL_DROPOUT, LSTM_HIDDEN_DIM, BIDIRECTIONAL,\
     LOSS_CURVE_PATH, ACC_CURVE_PATH, TEST_AUG_LOG_PATH, LR_DECAY, ADDING_NOISE, TRAIN_AUGMENTATION,\
-    TEST_AUGMENTATION, EMOTION_EMBEDDING_DIM, EMOTION_EMBEDDING_PATH, USE_EMOTION
+    TEST_AUGMENTATION, EMOTION_EMBEDDING_DIM, EMOTION_EMBEDDING_PATH, USE_EMOTION,\
+    TEXT_FIELD_PATH, LABEL_FIELD_PATH, BATCH_SIZE, MIN_FREQ, MAX_LENGTH
 
 __author__ = "Ehsan Tavan"
 __organization__ = "Persian Emoji Prediction"
@@ -35,7 +36,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/6/2020"
+__date__ = "12/01/2021"
 
 
 logging.basicConfig(
@@ -63,7 +64,10 @@ class RunModel:
                            validation_data_path=VALIDATION_NORMAL_DATA_PATH,
                            embedding_path=SKIPGRAM_NEWS_300D,
                            word_emotion_path=EMOTION_EMBEDDING_PATH)
-        data_set.load_data()
+        data_set.load_data(text_field_path=TEXT_FIELD_PATH, label_field_path=LABEL_FIELD_PATH,
+                           device=DEVICE, batch_size=BATCH_SIZE, sen_max_len=MAX_LENGTH,
+                           use_emotion=USE_EMOTION, emotion_embedding_dim=EMOTION_EMBEDDING_DIM,
+                           min_freq=MIN_FREQ)
         return data_set
 
     @staticmethod
