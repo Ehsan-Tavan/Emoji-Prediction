@@ -17,7 +17,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "01/04/2020"
+__date__ = "01/17/2020"
 
 RAW_NO_MENTION_DATA_PATH = "../data/Raw/first_categori_no_mention_tweets.csv"
 RAW_DATA_PATH = "../data/Raw/first_categori_tweets.csv"
@@ -54,9 +54,10 @@ BATCH_SIZE = 128
 EMBEDDING_DIM = 300
 EMOTION_EMBEDDING_DIM = 10
 DROPOUT = 0.2
-MAX_LENGTH = 35
+MAX_LENGTH = None
 LSTM_HIDDEN_DIM = 100
 BIDIRECTIONAL = True
+MIN_FREQ = 20
 
 ADDING_NOISE = False
 LR_DECAY = False
