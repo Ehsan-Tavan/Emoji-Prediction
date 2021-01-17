@@ -20,7 +20,7 @@ __version__ = "1.0.0"
 __maintainer__ = "Ehsan Tavan"
 __email__ = "tavan.ehsan@gmail.com"
 __status__ = "Production"
-__date__ = "12/26/2020"
+__date__ = "01/17/2021"
 
 
 class Transformer(nn.Module):
@@ -147,17 +147,18 @@ class EncoderLayer(nn.Module):
         _input_batch, _ = self.self_attention(input_batch, input_batch, input_batch, input_mask)
 
         # dropout, residual connection and layer norm
-        input_batch = self.self_attn_layer_norm(input_batch + self.dropout(_input_batch))
+        # # input_batch = self.self_attn_layer_norm(input_batch + self.dropout(_input_batch))
         # input_batch.size() = [batch_size, input_len, hid_dim]
 
         # positionwise feedforward
-        _input_batch = self.positionwise_feedforward(input_batch)
+        # # _input_batch = self.positionwise_feedforward(input_batch)
+        _input_batch = self.positionwise_feedforward(input_batch + self.dropout(_input_batch))
 
         # dropout, residual and layer norm
-        input_batch = self.ff_layer_norm(input_batch + self.dropout(_input_batch))
+        # # input_batch = self.ff_layer_norm(input_batch + self.dropout(_input_batch))
         # input_batch.size() = [batch_size, input_len, hid_dim]
 
-        return input_batch
+        return input_batch + self.dropout(_input_batch)
 
 
 class MultiHeadAttentionLayer(nn.Module):
